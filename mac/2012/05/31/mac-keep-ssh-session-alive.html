@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>
+      Mac: Keep ssh session alive
+    </title>
+    <meta name="viewport" content="width=device-width">
+    <!-- Compiled SCSS file -->
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
+  <body>
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+          </button>
+          <a class="navbar-brand" href="/"><img src="/images/profil_sw.png" alt="Profilbild" />&nbsp;ChrisLabs</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active">
+              <a href="#">Home</a>
+            </li>
+            <li>
+              <a href="#about">About</a>
+            </li>
+            <li>
+              <a href="#contact">Projects</a>
+            </li>
+          </ul>
+        </div>
+        <!--/.nav-collapse -->
+      </div>
+    </div>
+
+    <div class="content container">
+      <h1>Mac: Keep ssh session alive</h1>
+<p class="meta">31 May 2012</p>
+
+<div class="post">
+<p>When using Terminal and ssh to connect to your server the session will die after some time because of inactivity.</p>
+
+<p>To keep the session alive add this to your /etc/ssh_config:</p>
+
+<div class="highlight"><pre><code class="bash">ServerAliveInterval 300
+ServerAliveCountMax 3
+</code></pre></div>
+
+<p>I recommend <strong><a href="http://iterm.sourceforge.net">iTerm</a></strong> as an alternative to Terminal under OS X.</p>
+
+</div>
+
+    </div>
+
+
+    <div class="container footer">
+         <p>Christoph Gross | chris (at) gross-it.com | <a href="https://github.com/cgrossde">github.com/cgrossde</a>
+          </p>
+    </div>
+
+
+
+    <!-- Load JS files -->
+    <script src="js/vendor/jquery/jquery-1.10.2.min.js">
+    </script>
+    <script src="js/vendor/bootstrap/bootstrap.min.js">
+    </script>
+  </body>
+
+</html>

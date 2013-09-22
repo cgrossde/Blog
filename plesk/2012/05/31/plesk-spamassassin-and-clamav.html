@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>
+      Plesk: Spamassassin and ClamAV
+    </title>
+    <meta name="viewport" content="width=device-width">
+    <!-- Compiled SCSS file -->
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
+  <body>
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+          </button>
+          <a class="navbar-brand" href="/"><img src="/images/profil_sw.png" alt="Profilbild" />&nbsp;ChrisLabs</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active">
+              <a href="#">Home</a>
+            </li>
+            <li>
+              <a href="#about">About</a>
+            </li>
+            <li>
+              <a href="#contact">Projects</a>
+            </li>
+          </ul>
+        </div>
+        <!--/.nav-collapse -->
+      </div>
+    </div>
+
+    <div class="content container">
+      <h1>Plesk: Spamassassin and ClamAV</h1>
+<p class="meta">31 May 2012</p>
+
+<div class="post">
+<p>There is an easy way to integrate ClamAV as a plugin into spamassassin.</p>
+
+<p>Install ClamAV</p>
+
+<div class="highlight"><pre><code class="bash">apt-get install clamav clamav-daemon
+</code></pre></div>
+
+<p>Get necessary perl module</p>
+
+<div class="highlight"><pre><code class="bash">wget http://search.cpan.org/CPAN/authors/id/J/JA/JAMTUR/File-Scan-ClamAV-1.91.tar.gz
+tar xvzf File-Scan-ClamAV-1.91.tar.gz
+<span class="nb">cd </span>File-Scan-ClamAV-1.91
+perl Makefile.pl
+make
+make install
+</code></pre></div>
+
+<p>If you have @INC errors because of missing classes use cpan to install them. E.g.:</p>
+
+<div class="highlight"><pre><code class="bash">cpan File::Scan::ClamAV
+</code></pre></div>
+
+<p>Now download this plugin for spam assassin <a href="http://blog.blubyte.de/wp-content/uploads/2012/05/clamav.pm">clamav.pm</a> and put it in your /etc/spamassassin folder.</p>
+
+<p>Add this to your /etc/spamassassin/local.cf:</p>
+
+<div class="highlight"><pre><code class="bash"><span class="c">## ClamAV</span>
+loadplugin ClamAV clamav.pm
+full CLAMAV <span class="nb">eval</span>:check_clamav<span class="o">()</span>
+describe CLAMAV Clam AntiVirus detected a virus
+score CLAMAV 10
+add_header all Virus _CLAMAVRESULT_
+...
+</code></pre></div>
+
+<p>Restart spamassassin</p>
+
+<div class="highlight"><pre><code class="bash">/etc/init.d/psa-spamassassin restart
+</code></pre></div>
+
+<p>Test if it works with the <a href="http://de.wikipedia.org/wiki/EICAR-Testdatei">EICAR-Test</a>:</p>
+
+<div class="highlight"><pre><code class="bash"><span class="nb">echo</span> &amp;#039;X5O!P%@AP<span class="o">[</span>4<span class="se">\P</span>ZX54<span class="o">(</span>P^<span class="o">)</span>7CC<span class="o">)</span>7<span class="o">}</span><span class="nv">$EICAR</span>-STANDARD-ANTIVIRUS-TEST-FILE!<span class="nv">$H</span>+H*&amp;#039; | spamassassin
+</code></pre></div>
+
+<p>Your output should look something like this:</p>
+
+<div class="highlight"><pre><code class="bash">Received: from localhost by domain.com
+        with SpamAssassin;
+Subject: ***SPAM***
+X-Spam-Checker-Version: SpamAssassin on
+        domain.com
+X-Spam-Flag: YES
+X-Spam-Level: *****************
+X-Spam-Status: Yes, <span class="nv">score</span><span class="o">=</span>17.9 <span class="nv">required</span><span class="o">=</span>7.0 <span class="nv">tests</span><span class="o">=</span>CLAMAV,EMPTY_MESSAGE,
+        MISSING_DATE,MISSING_FROM,MISSING_HEADERS,MISSING_MID,MISSING_SUBJECT,
+        NO_HEADERS_MESSAGE,NO_RECEIVED,NO_RELAYS <span class="nv">autolearn</span><span class="o">=</span>unavailable <span class="nv">version</span><span class="o">=</span>3.3.1
+X-Spam-Virus: Yes <span class="o">(</span>Eicar-Test-Signature<span class="o">(</span>69630e4574ec6798239b091cda43dca0:69<span class="o">))</span>
+X-Spam-Pyzor: Reported 0 times.
+MIME-Version: 1.0
+Content-Type: multipart/mixed; <span class="nv">boundary</span><span class="o">=</span>&amp;quot;----------<span class="o">=</span>_4FC7A89F.14EFACC8&amp;quot;
+
+This is a multi-part message in MIME format.
+
+------------<span class="o">=</span>_4FC7A89F.14EFACC8
+Content-Type: text/plain; <span class="nv">charset</span><span class="o">=</span>iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+
+Software zur Erkennung von &amp;quot;Spam&amp;quot; auf dem Rechner
+
+    domain.com
+
+hat die eingegangene E-mail als m�gliche &amp;quot;Spam&amp;quot;-Nachricht identifiziert.
+Die urspr�ngliche Nachricht wurde an diesen Bericht angeh�ngt, so dass
+Sie sie anschauen k�nnen <span class="o">(</span>falls es doch eine legitime E-Mail ist<span class="o">)</span> oder
+�hnliche unerw�nschte Nachrichten in Zukunft markieren k�nnen.
+Bei Fragen zu diesem Vorgang wenden Sie sich bitte an
+
+    the administrator of that system
+
+Vorschau: <span class="o">[</span>...<span class="o">]</span> 
+
+Inhaltsanalyse im Detail:   <span class="o">(</span>17.9 Punkte, 7.0 ben�tigt<span class="o">)</span>
+
+Pkte Regelname              Beschreibung
+---- ---------------------- --------------------------------------------------
+-0.0 NO_RELAYS              Informational: message was not relayed via SMTP
+ 1.2 MISSING_HEADERS        Empf�ngeradresse <span class="o">(</span>&amp;quot;To&amp;quot;<span class="o">)</span> fehlt
+  10 CLAMAV                 Clam AntiVirus detected a virus
+                   <span class="o">[</span>Eicar-Test-Signature<span class="o">(</span>69630e4574ec6798239b091cda43dca0:69<span class="o">)]</span>
+ 0.1 MISSING_MID            Missing Message-Id: header
+ 1.8 MISSING_SUBJECT        Betreff <span class="o">(</span>&amp;quot;Subject&amp;quot;<span class="o">)</span> fehlt
+ 2.3 EMPTY_MESSAGE          Message appears to have no textual parts and no
+                            Subject: text
+ 1.0 MISSING_FROM           Missing From: header
+-0.0 NO_RECEIVED            Informational: message has no Received headers
+
+ 1.4 MISSING_DATE           Datumskopfzeile fehlt
+ 0.0 NO_HEADERS_MESSAGE     Message appears to be missing most RFC-822 headers
+
+------------<span class="o">=</span>_4FC7A89F.14EFACC8
+Content-Type: message/rfc822; x-spam-type<span class="o">=</span>original
+Content-Description: original message before SpamAssassin
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+
+X5O!P%@AP<span class="o">[</span>4<span class="se">\P</span>ZX54<span class="o">(</span>P^<span class="o">)</span>7CC<span class="o">)</span>7<span class="o">}</span><span class="nv">$EICAR</span>-STANDARD-ANTIVIRUS-TEST-FILE!<span class="nv">$H</span>+H*
+
+------------<span class="o">=</span>_4FC7A89F.14EFACC8--
+</code></pre></div>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+</div>
+
+    </div>
+
+
+    <div class="container footer">
+         <p>Christoph Gross | chris (at) gross-it.com | <a href="https://github.com/cgrossde">github.com/cgrossde</a>
+          </p>
+    </div>
+
+
+
+    <!-- Load JS files -->
+    <script src="js/vendor/jquery/jquery-1.10.2.min.js">
+    </script>
+    <script src="js/vendor/bootstrap/bootstrap.min.js">
+    </script>
+  </body>
+
+</html>

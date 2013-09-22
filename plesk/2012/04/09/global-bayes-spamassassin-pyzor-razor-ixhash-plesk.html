@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>
+      Global bayes spamassassin with pyzor, razor and iXHash on Plesk 10 / 9
+    </title>
+    <meta name="viewport" content="width=device-width">
+    <!-- Compiled SCSS file -->
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
+  <body>
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+          </button>
+          <a class="navbar-brand" href="/"><img src="/images/profil_sw.png" alt="Profilbild" />&nbsp;ChrisLabs</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active">
+              <a href="#">Home</a>
+            </li>
+            <li>
+              <a href="#about">About</a>
+            </li>
+            <li>
+              <a href="#contact">Projects</a>
+            </li>
+          </ul>
+        </div>
+        <!--/.nav-collapse -->
+      </div>
+    </div>
+
+    <div class="content container">
+      <h1>Global bayes spamassassin with pyzor, razor and iXHash on Plesk 10 / 9</h1>
+<p class="meta">09 Apr 2012</p>
+
+<div class="post">
+<p>Welcome to my first Post. Today I&#39;m going to show you how to use spamassassin with a global bayes db and modules like pyzor, razor and iXhash which are collaborative spam detections systems.
+I use a Debian 6 system with Plesk 10 but it works on Plesk 9 too and should work on any other major distribution.</p>
+
+<p>[notice]Make sure you have psa-spamassassin installed</p>
+
+<div class="highlight"><pre><code class="bash">apt-get install psa-spamassassin
+</code></pre></div>
+
+<p>[/notice]</p>
+
+<p>Let&#39;s start:</p>
+
+<div class="highlight"><pre><code class="bash">apt-get install pyzor razor
+</code></pre></div>
+
+<p><strong>Setup razor:</strong></p>
+
+<div class="highlight"><pre><code class="bash">razor-admin -home<span class="o">=</span>/etc/spamassassin/.razor -register
+ razor-admin -home<span class="o">=</span>/etc/spamassassin/.razor -create
+ razor-admin -home<span class="o">=</span>/etc/spamassassin/.razor -discover
+</code></pre></div>
+
+<p><strong>Setup pyzor:</strong></p>
+
+<div class="highlight"><pre><code class="bash">pyzor discover
+</code></pre></div>
+
+<p><strong>Setup iXHash:</strong></p>
+
+<div class="highlight"><pre><code class="bash"><span class="c"># get iXHash</span>
+wget <span class="s2">&quot;http://sourceforge.net/projects/ixhash/files/latest/download?source=files&quot;</span> -O iXHash.zip
+<span class="c"># extract</span>
+unzip iXHash.zip
+<span class="c"># rename</span>
+mv iXhash-1.5.5/ .iXHash
+</code></pre></div>
+
+<p><strong>Prepare for global spamassassin:</strong></p>
+
+<div class="highlight"><pre><code class="bash">mkdir /var/spool/spamassassin
+chown popuser /var/spool/spamassassin
+</code></pre></div>
+ 
+
+<p><strong>Configure spamassassin:</strong></p>
+
+<div class="highlight"><pre><code class="bash"><span class="c"># Pyzor</span>
+loadplugin Mail::SpamAssassin::Plugin::Pyzor
+pyzor_options --homedir /etc/spamassassin/.pyzor
+use_pyzor 1
+add_header all Pyzor _PYZOR_
+pyzor_path /usr/bin/pyzor
+
+<span class="c"># Razor</span>
+loadplugin Mail::SpamAssassin::Plugin::Razor2
+use_razor2 1
+razor_config /etc/spamassassin/.razor/razor-agent.conf
+score   RAZOR2_CHECK 1.5
+
+<span class="c"># iXHash</span>
+loadplugin Mail::SpamAssassin::Plugin::iXhash  /etc/mail/spamassassin/.iXHash/iXhash/iXhash.pm
+ixhash_timeout          10
+use_ixhash_cache        1
+ixhash_pureperl         1
+body            GENERIC_IXHASH <span class="nb">eval</span>:ixhashtest<span class="o">(</span><span class="s1">&#39;generic.ixhash.net&#39;</span><span class="o">)</span>
+describe        GENERIC_IXHASH iXhash found @ generic.ixhash.net
+tflags          GENERIC_IXHASH net
+score           GENERIC_IXHASH 3.0
+body            NIXSPAM_IXHASH <span class="nb">eval</span>:ixhashtest<span class="o">(</span><span class="s1">&#39;ix.dnsbl.manitu.net&#39;</span><span class="o">)</span>
+describe        NIXSPAM_IXHASH iXhash found @ ix.dnsbl.manitu.net
+tflags          NIXSPAM_IXHASH net
+score           NIXSPAM_IXHASH 3.0
+body            CTYME_IXHASH <span class="nb">eval</span>:ixhashtest<span class="o">(</span><span class="s1">&#39;ctyme.ixhash.net&#39;</span><span class="o">)</span>
+describe        CTYME_IXHASH BiXhash found @ ctyme.ixhash.ne
+tflags          CTYME_IXHASH net
+score           CTYME_IXHASH 3.0
+body            HOSTEUROPE_IXHASH <span class="nb">eval</span>:ixhashtest<span class="o">(</span><span class="s1">&#39;hosteurope.ixhash.net&#39;</span><span class="o">)</span>
+describe        HOSTEUROPE_IXHASH iXhash found @ hosteurope.ixhash.ne
+tflags          HOSTEUROPE_IXHASH net
+score           HOSTEUROPE_IXHASH 3.0
+
+<span class="c"># Set some scores</span>
+score       RCVD_IN_PBL 1.5
+score       BAYES_99 5.5
+score       BAYES_50 2.5
+score       RDNS_NONE 1.0
+score       RAZOR2_CF_RANGE_51_100 2.5
+score       RAZOR2_CF_RANGE_E8_51_100 2.5
+score       RAZOR2_CHECK 2.5
+score       DIGEST_MULTIPLE 2.0
+score       FORGED_OUTLOOK_TAGS 1.0
+score       FORGED_OUTLOOK_HTML 1.0
+score       URIBL_AB_SURBL 2.5
+score       URIBL_WS_SURBL 2.5
+score       URIBL_SC_SURBL 1.0
+score       HTML_IMAGE_RATIO_06 1.0
+score           FH_DATE_PAST_20XX 0.0
+
+<span class="c"># General settings</span>
+rewrite_header  subject ***SPAM***
+required_score  7.00
+
+<span class="c"># Setup global bayes</span>
+use_bayes 1
+use_bayes_rules 1
+bayes_auto_learn 1
+bayes_path /var/spool/spamassassin/bayes
+bayes_file_mode 0777
+</code></pre></div>
+
+<p><strong>Restart spamassassin</strong></p>
+
+<div class="highlight"><pre><code class="bash">/etc/init.d/psa-spamassassin restart
+</code></pre></div>
+
+<p>Make sure you have <span style="text-decoration: underline;">activated</span> &quot;<label for="fid-spamassassin_status"><em>Switch on server-wide SpamAssassin spam filtering</em>&quot;</label>   and <span style="text-decoration: underline;">deactivated</span> &quot;<em>Apply individual settings to spam filtering</em>&quot; in your Plesk Panel (Tools&amp;Settings &gt; Spam Filter Settings).</p>
+
+<p><strong>All emails send to you should now contain this in their header:</strong></p>
+
+<div class="highlight"><pre><code class="bash">X-Spam-Checker-Version:  SpamAssassin 3.3.1 <span class="o">(</span>2010-03-16<span class="o">)</span> on yourserver.net
+X-Spam-Level:   *
+X-Spam-Status:  No, <span class="nv">score</span><span class="o">=</span>1.8 <span class="nv">required</span><span class="o">=</span>7.0 <span class="nv">tests</span><span class="o">=</span>FREEMAIL_FROM,HTML_MESSAGE, MIME_HTML_ONLY,MIME_HTML_ONLY_MULTI,MPART_ALT_DIFF,RCVD_IN_DNSWL_NONE, T_RP_MATCHES_RCVD <span class="nv">autolearn</span><span class="o">=</span>no <span class="nv">version</span><span class="o">=</span>3.3.1
+X-Spam-Pyzor:   Reported 0 times.
+</code></pre></div>
+
+<p>You can make an easy test on your console with this command:</p>
+
+<div class="highlight"><pre><code class="bash"><span class="nb">echo</span> <span class="s2">&quot;messagetext&quot;</span> | spamassassin
+</code></pre></div>
+
+<p>If you have questions or problems, just leave a comment.</p>
+
+<p>&nbsp;</p>
+
+</div>
+
+    </div>
+
+
+    <div class="container footer">
+         <p>Christoph Gross | chris (at) gross-it.com | <a href="https://github.com/cgrossde">github.com/cgrossde</a>
+          </p>
+    </div>
+
+
+
+    <!-- Load JS files -->
+    <script src="js/vendor/jquery/jquery-1.10.2.min.js">
+    </script>
+    <script src="js/vendor/bootstrap/bootstrap.min.js">
+    </script>
+  </body>
+
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>
+      Upgrade to Plesk 10.4.4 - check-quota filter errors
+    </title>
+    <meta name="viewport" content="width=device-width">
+    <!-- Compiled SCSS file -->
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
+  <body>
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+          </button>
+          <a class="navbar-brand" href="/"><img src="/images/profil_sw.png" alt="Profilbild" />&nbsp;ChrisLabs</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active">
+              <a href="#">Home</a>
+            </li>
+            <li>
+              <a href="#about">About</a>
+            </li>
+            <li>
+              <a href="#contact">Projects</a>
+            </li>
+          </ul>
+        </div>
+        <!--/.nav-collapse -->
+      </div>
+    </div>
+
+    <div class="content container">
+      <h1>Upgrade to Plesk 10.4.4 - check-quota filter errors</h1>
+<p class="meta">12 Apr 2012</p>
+
+<div class="post">
+<p>After upgrading to Plesk 10.4.4 you might be confronted with errors like this:
+<pre class="lang:sh decode:true">... qmail-queue-handlers[...]: SKIP during call &#39;check-quota&#39; handler</pre>
+In my case it was because the check-quota handler didn&#39;t exist, so I disabled it.
+With Plesk 10.4.x the mail handlers are stored in a sql database.</p>
+
+<p>Here&#39;s how you can view them:
+<pre class="lang:default mark:1,6,8 decode:true">sqlite3 /var/lib/plesk/mail/handlers/handlers.db
+SQLite version 3.7.3
+Enter &quot;.help&quot; for instructions
+Enter SQL statements terminated with a &quot;;&quot;</p>
+
+<h1>Turn column headers on</h1>
+
+<p>sqlite&gt; .headers ON</p>
+
+<h1>Get the list of handlers</h1>
+
+<p>sqlite&gt; select * from handlers;
+queue|type|enabled|priority|name|address|executable|context
+1|4|1|10|check-quota|all|/opt/psa/handlers/hooks/check-quota|none
+1|4|0|10|spf|all|/opt/psa/handlers/hooks/spf|none
+2|1|1|10|spam|mail1@yourdomain.com|/opt/psa/handlers/hooks/spam|text
+2|1|1|10|spam|mail2@yourdomain.com|/opt/psa/handlers/hooks/spam|text
+2|1|1|10|spam|mail3@yourdomain.com|/opt/psa/handlers/hooks/spam|text
+...</pre>
+As you can see the check-quota handler is stored at
+<pre class="nums:false lang:default decode:true">/opt/psa/handlers/hooks/</pre>
+In my case /opt/psa/handlers/hooks/check-quota was a broken symlink and I don&#39;t know where to get it but to avoid the errors <strong>you can disable the check-quota handler:
+</strong>
+<pre class="lang:default decode:true"># Make backup of your handlers db !!!
+cp /var/lib/plesk/mail/handlers/handlers.db /var/lib/plesk/mail/handlers/handlers.db.bak</p>
+
+<h1>Open Database</h1>
+
+<p>sqlite3 /var/lib/plesk/mail/handlers/handlers.db
+SQLite version 3.7.3
+Enter &quot;.help&quot; for instructions
+Enter SQL statements terminated with a &quot;;&quot;</p>
+
+<h1>Disable check-quota handler</h1>
+
+<p>sqlite&gt; update handlers set enabled = 0 where name = &#39;check-quota&#39;;</p>
+
+<h1>Check first 5 entries if everything went fine</h1>
+
+<p>sqlite&gt; select * from handlers limit 5;
+1|4|0|10|check-quota|all|/opt/psa/handlers/hooks/check-quota|none
+1|4|0|10|spf|all|/opt/psa/handlers/hooks/spf|none
+2|1|1|10|spam|mail1@yourdomain.com|/opt/psa/handlers/hooks/spam|text
+2|1|1|10|spam|mail2@yourdomain.com|/opt/psa/handlers/hooks/spam|text
+2|1|1|10|spam|mail3@yourdomain.com|/opt/psa/handlers/hooks/spam|text</pre>
+Now the check-quota handler isn&#39;t called anymore and there will be no errors like
+<pre class="nums:false lang:default decode:true">SKIP during call &#39;check-quota&#39; handler</pre>
+in your log files. You can enable it again when Parallels fixed the issue with:
+<pre class="lang:default decode:true">sqlite&gt; update handlers set enabled = 1 where name = &#39;check-quota&#39;;</pre></p>
+
+</div>
+
+    </div>
+
+
+    <div class="container footer">
+         <p>Christoph Gross | chris (at) gross-it.com | <a href="https://github.com/cgrossde">github.com/cgrossde</a>
+          </p>
+    </div>
+
+
+
+    <!-- Load JS files -->
+    <script src="js/vendor/jquery/jquery-1.10.2.min.js">
+    </script>
+    <script src="js/vendor/bootstrap/bootstrap.min.js">
+    </script>
+  </body>
+
+</html>

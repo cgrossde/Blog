@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>
+      Plesk 10.4.4 with qmail: spamassassin not working
+    </title>
+    <meta name="viewport" content="width=device-width">
+    <!-- Compiled SCSS file -->
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
+  <body>
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+          </button>
+          <a class="navbar-brand" href="/"><img src="/images/profil_sw.png" alt="Profilbild" />&nbsp;ChrisLabs</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active">
+              <a href="#">Home</a>
+            </li>
+            <li>
+              <a href="#about">About</a>
+            </li>
+            <li>
+              <a href="#contact">Projects</a>
+            </li>
+          </ul>
+        </div>
+        <!--/.nav-collapse -->
+      </div>
+    </div>
+
+    <div class="content container">
+      <h1>Plesk 10.4.4 with qmail: spamassassin not working</h1>
+<p class="meta">12 Apr 2012</p>
+
+<div class="post">
+<p>I switched from postfix to qmail by using the autoinstaller and noticed my mails weren&#39;t scanned for spam anymore.
+I tried this:
+<pre class="lang:sh decode:true">/usr/local/psa/admin/sbin/mchk --with-spam</pre>
+but that didn&#39;t fix the problem either. After some digging and switching between postfix (SA worked) and qmail I found the reason.
+The mail-handler for spam was disabled when using qmail. Since plesk 10.4.x the mail-handlers are stored in a sql database (/var/lib/plesk/mail/handlers/handlers.db)</p>
+
+<p><strong>Here&#39;s how you can check if that&#39;s the problem in your case:</strong>
+<pre class="lang:sh mark:1,6,8 decode:true">sqlite3 /var/lib/plesk/mail/handlers/handlers.db
+SQLite version 3.7.3
+Enter &quot;.help&quot; for instructions
+Enter SQL statements terminated with a &quot;;&quot;</p>
+
+<h1>Turn column headers on</h1>
+
+<p>sqlite&gt; .headers ON</p>
+
+<h1>Get the list of handlers</h1>
+
+<p>sqlite&gt; select * from handlers;
+queue|type|enabled|priority|name|address|executable|context
+1|4|1|10|check-quota|all|/opt/psa/handlers/hooks/check-quota|none
+1|4|0|10|spf|all|/opt/psa/handlers/hooks/spf|none
+2|1|0|10|spam|mail1@yourdomain.com|/opt/psa/handlers/hooks/spam|text
+2|1|0|10|spam|mail2@yourdomain.com|/opt/psa/handlers/hooks/spam|text
+2|1|0|10|spam|mail3@yourdomain.com|/opt/psa/handlers/hooks/spam|text
+...</pre>
+As you can see the third column defines if the handler is enabled or not. And after switching to qmail all the spam handlers ended up disabled.</p>
+
+<p><strong>How to fix it:</strong>
+<pre class="lang:sh mark:2,4,9,11 decode:true"># Make backup of your handlers db !!!
+cp /var/lib/plesk/mail/handlers/handlers.db /var/lib/plesk/mail/handlers/handlers.db.bak</p>
+
+<h1>Open Database</h1>
+
+<p>sqlite3 /var/lib/plesk/mail/handlers/handlers.db
+SQLite version 3.7.3
+Enter &quot;.help&quot; for instructions
+Enter SQL statements terminated with a &quot;;&quot;</p>
+
+<h1>Enable all spam handlers</h1>
+
+<p>sqlite&gt; update handlers set enabled = 1 where name = &#39;spam&#39;;</p>
+
+<h1>Check first 5 entries if everything went fine</h1>
+
+<p>sqlite&gt; select * from handlers limit 5;
+1|4|1|10|check-quota|all|/opt/psa/handlers/hooks/check-quota|none
+1|4|0|10|spf|all|/opt/psa/handlers/hooks/spf|none
+2|1|1|10|spam|mail1@yourdomain.com|/opt/psa/handlers/hooks/spam|text
+2|1|1|10|spam|mail2@yourdomain.com|/opt/psa/handlers/hooks/spam|text
+2|1|1|10|spam|mail3@yourdomain.com|/opt/psa/handlers/hooks/spam|text</pre>
+<strong> That&#39;s it!</strong>
+See also: <a href="http://kb.parallels.com/en/113664">http://kb.parallels.com/en/113664</a> - DO NOT FOLLOW THESE INSTRUCTIONS, mchk wil NOT regenerate the mail handler-table, so make a backup first</p>
+
+</div>
+
+    </div>
+
+
+    <div class="container footer">
+         <p>Christoph Gross | chris (at) gross-it.com | <a href="https://github.com/cgrossde">github.com/cgrossde</a>
+          </p>
+    </div>
+
+
+
+    <!-- Load JS files -->
+    <script src="js/vendor/jquery/jquery-1.10.2.min.js">
+    </script>
+    <script src="js/vendor/bootstrap/bootstrap.min.js">
+    </script>
+  </body>
+
+</html>

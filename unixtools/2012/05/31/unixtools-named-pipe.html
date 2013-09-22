@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>
+      Unixtools: Named pipe
+    </title>
+    <meta name="viewport" content="width=device-width">
+    <!-- Compiled SCSS file -->
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
+  <body>
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+          </button>
+          <a class="navbar-brand" href="/"><img src="/images/profil_sw.png" alt="Profilbild" />&nbsp;ChrisLabs</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active">
+              <a href="#">Home</a>
+            </li>
+            <li>
+              <a href="#about">About</a>
+            </li>
+            <li>
+              <a href="#contact">Projects</a>
+            </li>
+          </ul>
+        </div>
+        <!--/.nav-collapse -->
+      </div>
+    </div>
+
+    <div class="content container">
+      <h1>Unixtools: Named pipe</h1>
+<p class="meta">31 May 2012</p>
+
+<div class="post">
+<p>Sometimes it&#39;s useful to have a named pipe, as you can see in this MySQL-backup example. We create a backup of the DB and directly compress the data:</p>
+
+<div class="highlight"><pre><code class="bash">gzip -9 -c &lt; mysql_pipe &gt; <span class="sb">`</span>date <span class="s2">&quot;+%Y_%m_%d&quot;</span><span class="sb">`</span>_db.gz &amp; mysqldump --opt --all-databases -uadmin -p<span class="sb">`</span>cat /etc/psa/.psa.shadow<span class="sb">`</span> &gt; mysql_pipe
+</code></pre></div>
+
+<p>I named the pipe &quot;mysql_pipe&quot; and use it to gzip my mysql backup.</p>
+
+<p>Here&#39;s how you can create them:</p>
+
+<div class="highlight"><pre><code class="bash">mkfifo mysq_pipe
+</code></pre></div>
+
+</div>
+
+    </div>
+
+
+    <div class="container footer">
+         <p>Christoph Gross | chris (at) gross-it.com | <a href="https://github.com/cgrossde">github.com/cgrossde</a>
+          </p>
+    </div>
+
+
+
+    <!-- Load JS files -->
+    <script src="js/vendor/jquery/jquery-1.10.2.min.js">
+    </script>
+    <script src="js/vendor/bootstrap/bootstrap.min.js">
+    </script>
+  </body>
+
+</html>
