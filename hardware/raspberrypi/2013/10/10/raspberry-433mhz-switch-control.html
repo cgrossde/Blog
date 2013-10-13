@@ -50,7 +50,7 @@
 <div class="post">
 <h2>Install rcswitch-pi</h2>
 
-<p>To control the 433MHz transmitter we need the tool rcswitch-pi which is based on wiringPi (if you don&#39;t have wiringPi yet, install it <a href="/hardware/raspberry%20pi/2013/09/17/raspberry-tinkering-with-the-raspberry-pi.html">first</a>.</p>
+<p>To control the 433MHz transmitter we need the tool rcswitch-pi which is based on wiringPi (if you don&#39;t have wiringPi yet, install it <a href="/hardware/raspberrypi/2013/09/17/raspberry-tinkering-with-the-raspberry-pi.html">first</a>).</p>
 
 <div class="highlight"><pre><code class="bash">mkdir div
 <span class="nb">cd </span>div
@@ -115,7 +115,9 @@ rm *
 git clone https://github.com/cgrossde/RPi.RCSwitchWebapp .
 </code></pre></div>
 
-<p>Now you can enter your RPis IP in the Browser <a href="http://192.168.2.2">http://192.168.2.2</a> and try it out. Have fun ;)</p>
+<p>Now modify <code>switchcontrol.php</code> and replace my systemcode with yours in this line: <code>$systemCode = &quot;01110&quot;</code>;</p>
+
+<p>Now you can enter your RPi IP in the Browser <a href="http://192.168.2.2">http://192.168.2.2</a> and try it out. Have fun ;)</p>
 
 
 <hr>
