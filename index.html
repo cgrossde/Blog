@@ -7,12 +7,17 @@
     <title>
       ChrisLabs
     </title>
-    <base href="http://chris-labs.de/" />
+    <base href="http://localhost:4000/" />
     <meta name="viewport" content="width=device-width">
     <!-- Compiled SCSS file -->
     <link rel="stylesheet" href="css/styles.css">
+    <script>
+      var shiftWindow = function() { scrollBy(0, -60) };
+      window.addEventListener("hashchange", shiftWindow);
+      function load() { if (window.location.hash) shiftWindow(); }
+    </script>
   </head>
-  <body>
+  <body onload="load()">
     <!-- Fixed navbar -->
     <div class="navbar navbar-default navbar-fixed-top">
       <div class="container">
@@ -25,12 +30,12 @@
             <span class="icon-bar">
             </span>
           </button>
-          <a class="navbar-brand" href="http://chris-labs.de/"><img src="images/profil_sw.png" alt="Profilbild" />&nbsp;<strong>CHRIS</strong>labs</a>
+          <a class="navbar-brand" href="http://localhost:4000/"><img src="images/profil_sw.png" alt="Profilbild" />&nbsp;<strong>CHRIS</strong>labs</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li class="active">
-              <a href="http://chris-labs.de/">Home</a>
+              <a href="http://localhost:4000/">Home</a>
             </li>
             <!--li>
               <a href="#about">About</a>
@@ -43,33 +48,98 @@
         <!--/.nav-collapse -->
       </div>
     </div>
-
     <div class="content container">
       <div id="home">
-  <h1>Blog Posts</h1>
-  <ul class="posts">
-    
-      <li><span>10 Oct 2013</span> &raquo; <a href="http://chris-labs.de/hardware/raspberrypi/2013/10/10/raspberry-433mhz-switch-control.html">Raspberry Pi&#58; Control 433MHz switch over webinterface</a></li>
-    
-      <li><span>17 Sep 2013</span> &raquo; <a href="http://chris-labs.de/hardware/raspberrypi/2013/09/17/raspberry-tinkering-with-the-raspberry-pi.html">Tinkering with the Raspberry Pi</a></li>
-    
-      <li><span>31 May 2012</span> &raquo; <a href="http://chris-labs.de/unixtools/2012/05/31/unixtools-named-pipe.html">Unixtools: Named pipe</a></li>
-    
-      <li><span>31 May 2012</span> &raquo; <a href="http://chris-labs.de/unixtools/2012/05/31/unix-tools-screen.html">Unixtools: SCREEN</a></li>
-    
-      <li><span>31 May 2012</span> &raquo; <a href="http://chris-labs.de/plesk/2012/05/31/plesk-spamassassin-and-clamav.html">Plesk: Spamassassin and ClamAV</a></li>
-    
-      <li><span>31 May 2012</span> &raquo; <a href="http://chris-labs.de/plesk/2012/05/31/plesk-emailaccounts-get-passwords.html">Plesk Emailaccounts get passwords</a></li>
-    
-      <li><span>31 May 2012</span> &raquo; <a href="http://chris-labs.de/mac/2012/05/31/mac-keep-ssh-session-alive.html">Mac: Keep ssh session alive</a></li>
-    
-      <li><span>12 Apr 2012</span> &raquo; <a href="http://chris-labs.de/plesk/2012/04/12/upgrade-to-plesk-10-4-4-check-quota-filter-errors.html">Upgrade to Plesk 10.4.4 - check-quota filter errors</a></li>
-    
-      <li><span>12 Apr 2012</span> &raquo; <a href="http://chris-labs.de/plesk/2012/04/12/plesk-10-4-4-with-qmail-spamassassin-not-working.html">Plesk 10.4.4 with qmail: spamassassin not working</a></li>
-    
-      <li><span>09 Apr 2012</span> &raquo; <a href="http://chris-labs.de/plesk/2012/04/09/global-bayes-spamassassin-pyzor-razor-ixhash-plesk.html">Global bayes spamassassin with pyzor, razor and iXHash on Plesk 10 / 9</a></li>
-    
-  </ul>
+	<h1>
+		Blog Posts
+	</h1>
+	<ul class="posts">
+		
+		<li>
+			<span>
+				10 Oct 2013
+			</span>
+			&raquo;
+			<a href="http://localhost:4000/hardware/raspberrypi/2013/10/10/raspberrypi-433mhz-switch-control.html">Raspberry Pi: Control 433MHz switch over webinterface</a>
+		</li>
+		
+		<li>
+			<span>
+				17 Sep 2013
+			</span>
+			&raquo;
+			<a href="http://localhost:4000/hardware/raspberrypi/2013/09/17/raspberrypi-first-time-setup.html">Raspberry Pi: First time setup</a>
+		</li>
+		
+		<li>
+			<span>
+				31 May 2012
+			</span>
+			&raquo;
+			<a href="http://localhost:4000/unixtools/2012/05/31/unixtools-screen.html">Unixtools: SCREEN</a>
+		</li>
+		
+		<li>
+			<span>
+				31 May 2012
+			</span>
+			&raquo;
+			<a href="http://localhost:4000/unixtools/2012/05/31/unixtools-named-pipe.html">Unixtools: Named pipe</a>
+		</li>
+		
+		<li>
+			<span>
+				31 May 2012
+			</span>
+			&raquo;
+			<a href="http://localhost:4000/plesk/2012/05/31/plesk-spamassassin-and-clamav.html">Plesk: Spamassassin and ClamAV</a>
+		</li>
+		
+		<li>
+			<span>
+				31 May 2012
+			</span>
+			&raquo;
+			<a href="http://localhost:4000/plesk/2012/05/31/plesk-emailaccounts-get-passwords.html">Plesk: Get mail accounts passwords</a>
+		</li>
+		
+		<li>
+			<span>
+				31 May 2012
+			</span>
+			&raquo;
+			<a href="http://localhost:4000/mac/2012/05/31/mac-keep-ssh-session-alive.html">Mac: Keep ssh session alive</a>
+		</li>
+		
+		<li>
+			<span>
+				12 Apr 2012
+			</span>
+			&raquo;
+			<a href="http://localhost:4000/plesk/2012/04/12/plesk-upgrade-to-10-4-4-check-quota-filter-errors.html">Plesk: Upgrade to 10.4.4 - check-quota filter errors</a>
+		</li>
+		
+		<li>
+			<span>
+				12 Apr 2012
+			</span>
+			&raquo;
+			<a href="http://localhost:4000/plesk/2012/04/12/plesk-10-4-4-with-qmail-spamassassin-not-working.html">Plesk 10.4.4 with qmail: spamassassin not working</a>
+		</li>
+		
+		<li>
+			<span>
+				09 Apr 2012
+			</span>
+			&raquo;
+			<a href="http://localhost:4000/plesk/2012/04/09/plesk-global-bayes-spamassassin-pyzor-razor-ixhash.html">Plesk: Global bayes spamassassin with pyzor, razor and iXHash</a>
+		</li>
+		
+	</ul>
+	<hr>
+	<div id="tag-cloud">
+		<a href="/tag/433Mhz.html" class="set-1">433Mhz</a> <a href="/tag/Backup.html" class="set-1">Backup</a> <a href="/tag/Clamav.html" class="set-1">Clamav</a> <a href="/tag/Mail%20password.html" class="set-1">Mail password</a> <a href="/tag/Named%20pipe.html" class="set-1">Named pipe</a> <a href="/tag/Plesk.html" class="set-3">Plesk</a> <a href="/tag/Postfix.html" class="set-1">Postfix</a> <a href="/tag/Qmail.html" class="set-1">Qmail</a> <a href="/tag/RaspberryPi.html" class="set-3">RaspberryPi</a> <a href="/tag/Raspian.html" class="set-1">Raspian</a> <a href="/tag/Screen.html" class="set-1">Screen</a> <a href="/tag/Sensors.html" class="set-1">Sensors</a> <a href="/tag/Spamassassin.html" class="set-1">Spamassassin</a> <a href="/tag/Unixtools.html" class="set-3">Unixtools</a> <a href="/tag/Webinterface.html" class="set-1">Webinterface</a> <a href="/tag/WiringPi.html" class="set-1">WiringPi</a> <a href="/tag/check-quota.html" class="set-1">check-quota</a> <a href="/tag/debian.html" class="set-1">debian</a> <a href="/tag/ixhash.html" class="set-1">ixhash</a> <a href="/tag/keep%20alive.html" class="set-1">keep alive</a> <a href="/tag/mac.html" class="set-1">mac</a> <a href="/tag/mail%20handlers.html" class="set-1">mail handlers</a> <a href="/tag/plesk.html" class="set-5">plesk</a> <a href="/tag/pyzor.html" class="set-1">pyzor</a> <a href="/tag/qmail.html" class="set-1">qmail</a> <a href="/tag/razor.html" class="set-1">razor</a> <a href="/tag/spamassassin.html" class="set-3">spamassassin</a> <a href="/tag/ssh.html" class="set-1">ssh</a>
+	</div>
 </div>
     </div>
 

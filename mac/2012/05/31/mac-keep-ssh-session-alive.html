@@ -7,12 +7,17 @@
     <title>
       Mac: Keep ssh session alive
     </title>
-    <base href="http://chris-labs.de/" />
+    <base href="http://localhost:4000/" />
     <meta name="viewport" content="width=device-width">
     <!-- Compiled SCSS file -->
     <link rel="stylesheet" href="css/styles.css">
+    <script>
+      var shiftWindow = function() { scrollBy(0, -60) };
+      window.addEventListener("hashchange", shiftWindow);
+      function load() { if (window.location.hash) shiftWindow(); }
+    </script>
   </head>
-  <body>
+  <body onload="load()">
     <!-- Fixed navbar -->
     <div class="navbar navbar-default navbar-fixed-top">
       <div class="container">
@@ -25,12 +30,12 @@
             <span class="icon-bar">
             </span>
           </button>
-          <a class="navbar-brand" href="http://chris-labs.de/"><img src="images/profil_sw.png" alt="Profilbild" />&nbsp;<strong>CHRIS</strong>labs</a>
+          <a class="navbar-brand" href="http://localhost:4000/"><img src="images/profil_sw.png" alt="Profilbild" />&nbsp;<strong>CHRIS</strong>labs</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li class="active">
-              <a href="http://chris-labs.de/">Home</a>
+              <a href="http://localhost:4000/">Home</a>
             </li>
             <!--li>
               <a href="#about">About</a>
@@ -43,7 +48,6 @@
         <!--/.nav-collapse -->
       </div>
     </div>
-
     <div class="content container">
       <h1>Mac: Keep ssh session alive</h1>
 <p class="meta">31 May 2012</p>
@@ -52,15 +56,15 @@
 <p>When using Terminal and ssh to connect to your server the session will die after some time because of inactivity.</p>
 
 <p>To keep the session alive add this to your /etc/ssh_config:</p>
-
-<div class="highlight"><pre><code class="bash">ServerAliveInterval 300
+<div class='highlight'><pre><code class='bash'>ServerAliveInterval 300
 ServerAliveCountMax 3
 </code></pre></div>
-
-<p>I recommend <strong><a href="http://iterm.sourceforge.net">iTerm</a></strong> as an alternative to Terminal under OS X.</p>
-
+<p>I recommend <strong><a href='http://iterm.sourceforge.net'>iTerm</a></strong> as an alternative to Terminal under OS X.</p>
 
 <hr>
+<p class="tags"><small>
+		Tags: <a href="/tag/keep%20alive.html" rel="tag">keep alive</a>, <a href="/tag/mac.html" rel="tag">mac</a>, <a href="/tag/ssh.html" rel="tag">ssh</a></small>
+		</p>
  <div id="disqus_thread"></div>
     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>

@@ -7381,10 +7381,6 @@ td.visible-print {
 }
 
 /* Literal.Number.Integer.Long */
-.this-is-a-marker {
-  color: red;
-}
-
 /*! fancyBox v2.1.5 fancyapps.com | fancyapps.com/fancybox/#license */
 .fancybox-wrap,
 .fancybox-skin,
@@ -7657,6 +7653,23 @@ td.visible-print {
     /*The size of the normal image, half the size of the hi-res image*/
   }
 }
+#tag-cloud a.set-1 {
+  font-size: 17px;
+}
+#tag-cloud a.set-2 {
+  font-size: 22px;
+}
+#tag-cloud a.set-3 {
+  font-size: 26px;
+}
+#tag-cloud a.set-4 {
+  font-size: 28px;
+}
+#tag-cloud a.set-5 {
+  font-size: 28px;
+  font-weight: bold;
+}
+
 /* Code Highlight */
 .highlight {
   margin: 10px;
@@ -7685,6 +7698,9 @@ h2 {
   clear: both;
 }
 
+/**
+ * Text and box alignment
+ */
 .right {
   float: right;
   margin-left: 10px;
@@ -7734,7 +7750,7 @@ body {
 
 /*****************************************************************************/
 /*
-/* Home
+/* Posts
 /*
 /*****************************************************************************/
 ul.posts {
@@ -7750,6 +7766,19 @@ ul.posts span {
   color: #aaa;
   font-family: Monaco, "Courier New", monospace;
   font-size: 80%;
+}
+
+/* standard */
+.post ul, .post ol {
+  margin-left: 1.35em;
+}
+
+.post code {
+  padding: 0 0;
+}
+
+.tags {
+  padding-left: 20px;
 }
 
 /*****************************************************************************/
@@ -7811,15 +7840,6 @@ ul.posts span {
 /* Posts
 /*
 /*****************************************************************************/
-/* standard */
-.post ul, .post ol {
-  margin-left: 1.35em;
-}
-
-.post code {
-  padding: 0 0;
-}
-
 .navbar .container .navbar-nav > li > a {
   color: #FFFFFF;
 }

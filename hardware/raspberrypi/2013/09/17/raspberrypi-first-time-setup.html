@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="google-site-verification" content="OHM4kICBE2MaQ9U7G1F07CMG2wEzl46eWq7tNGAyWjc" />
+    <title>
+      Raspberry Pi: First time setup
+    </title>
+    <base href="http://localhost:4000/" />
+    <meta name="viewport" content="width=device-width">
+    <!-- Compiled SCSS file -->
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+      var shiftWindow = function() { scrollBy(0, -60) };
+      window.addEventListener("hashchange", shiftWindow);
+      function load() { if (window.location.hash) shiftWindow(); }
+    </script>
+  </head>
+  <body onload="load()">
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+          </button>
+          <a class="navbar-brand" href="http://localhost:4000/"><img src="images/profil_sw.png" alt="Profilbild" />&nbsp;<strong>CHRIS</strong>labs</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active">
+              <a href="http://localhost:4000/">Home</a>
+            </li>
+            <!--li>
+              <a href="#about">About</a>
+            </li>
+            <li>
+              <a href="#contact">Projects</a>
+            </li-->
+          </ul>
+        </div>
+        <!--/.nav-collapse -->
+      </div>
+    </div>
+    <div class="content container">
+      <h1>Raspberry Pi: First time setup</h1>
+<p class="meta">17 Sep 2013</p>
+
+<div class="post">
+<p>I spent the last six months in Singapore working on the <a href='http://en.wikipedia.org/wiki/Industry_4.0'>Internet of Things</a> and <a href='http://en.wikipedia.org/wiki/Machine-to-Machine'>M2M</a>. Luckily this also involved playing around with a Raspberry Pi and hooking it up to some sensors. In this post I will describe my basic setup of the RPi and which sensors you might want to buy.</p>
+
+<h2 id='install_raspian'>Install Raspian</h2>
+
+<p>Usually I only access the RPi via SSH. So here the process on how to set it up without keyboard or monitor:</p>
+
+<p>Goto <a href='http://www.raspberrypi.org/downloads'>http://www.raspberrypi.org/downloads</a> and download the latest Raspian Image. Copy the image to a four or eight GB SD-card (If you need help check this page out: <a href='http://elinux.org/RPi_Easy_S'>Easy SD Card Setup</a>.</p>
+
+<h2 id='connect_to_the_rpi'>Connect to the RPi</h2>
+
+<p>In the latest image of Raspbian SSH is already activated. If you use internet sharing on your Mac as described <a href='http://www.mactip.net/share-internet-connection-mac/'>here</a> you will now need to find out the RPis IP. Enter <code>ifconfig</code> in a Terminal and you should find something like this</p>
+<div class='highlight'><pre><code class='bash'>...
+bridge0: <span class='nv'>flags</span><span class='o'>=</span>8863&lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
+	ether ac:de:48:25:33:fe
+	inet 192.168.2.1 netmask 0xffffff00 broadcast 192.168.2.255
+	Configuration:
+		priority 0 hellotime 0 fwddelay 0 maxage 0
+		ipfilter disabled flags 0x2
+	member: en2 <span class='nv'>flags</span><span class='o'>=</span>3&lt;LEARNING,DISCOVER&gt;
+	         port 6 priority 0 path cost 0
+...
+</code></pre></div>
+<p>We can asume that the RPi will have an IP between 192.168.2.1 and 192.168.2.255. If you have nmap installed you can enter <code>nmap -sP 192.168.2.1-255</code> and it will output something like this:</p>
+<div class='highlight'><pre><code class='bash'>Starting Nmap 6.40 <span class='o'>(</span> http://nmap.org <span class='o'>)</span> at 2013-09-22 09:42 CEST
+Nmap scan report <span class='k'>for </span>192.168.2.1
+Host is up <span class='o'>(</span>0.0036s latency<span class='o'>)</span>.
+Nmap scan report <span class='k'>for </span>192.168.2.2
+Host is up <span class='o'>(</span>0.00092s latency<span class='o'>)</span>.
+Nmap <span class='k'>done</span>: 255 IP addresses <span class='o'>(</span>2 hosts up<span class='o'>)</span> scanned in 3.03 seconds
+</code></pre></div>
+<p>So there are two hosts in the network: our Mac (192.168.2.1) and the other one can only be the RPi (192.168.2.2)</p>
+
+<p>If you don&#8217;t have nmap, you need to try out one IP after another starting with 192.168.2.2.</p>
+
+<p>Enter <code>ssh pi@192.168.2.2 -o &quot;UserKnownHostsFile /dev/null&quot;</code> to login to you RPi. Password is &#8216;raspberry&#8217;. The option <code>-o &quot;UserKnownHostsFile /dev/null&quot;</code> will prevent that the RPi is added to your known_hosts file because the RPis signature will change in the next step.</p>
+
+<h2 id='setup_the_rpi'>Setup the RPi</h2>
+
+<p>First regenerate public/private keys</p>
+<div class='highlight'><pre><code class='bash'>sudo rm /etc/ssh/ssh_host_* <span class='o'>&amp;&amp;</span> sudo dpkg-reconfigure openssh-server
+</code></pre></div>
+<p>After that <code>logout</code> and login(<code>ssh pi@192.168.2.2</code>) again.</p>
+
+<p>Now you can run the RPis config by entering <code>sudo raspi-config</code> which allows you to expand the filesystem to use the whole SD card. You should also set the &#8216;Internationalization Options&#8217;. You will get some errors like this:</p>
+<div class='highlight'><pre><code class='bash'>perl: warning: Setting locale failed.
+perl: warning: Please check that your locale settings:
+	<span class='nv'>LANGUAGE</span> <span class='o'>=</span> <span class='o'>(</span><span class='nb'>unset</span><span class='o'>)</span>,
+	<span class='nv'>LC_ALL</span> <span class='o'>=</span> <span class='o'>(</span><span class='nb'>unset</span><span class='o'>)</span>,
+	<span class='nv'>LC_CTYPE</span> <span class='o'>=</span> <span class='s2'>&quot;de_DE.UTF-8&quot;</span>,
+	<span class='nv'>LANG</span> <span class='o'>=</span> <span class='s2'>&quot;en_GB.UTF-8&quot;</span>
+    are supported and installed on your system.
+perl: warning: Falling back to the standard locale <span class='o'>(</span><span class='s2'>&quot;C&quot;</span><span class='o'>)</span>.
+locale: Cannot <span class='nb'>set </span>LC_CTYPE to default locale: No such file or directory
+locale: Cannot <span class='nb'>set </span>LC_ALL to default locale: No such file or directory
+/usr/bin/locale: Cannot <span class='nb'>set </span>LC_CTYPE to default locale: No such file or directory
+/usr/bin/locale: Cannot <span class='nb'>set </span>LC_ALL to default locale: No such file or directory
+</code></pre></div>
+<p>So be sure to add the locales shown (&#8220;de_DE.UTF-8&#8221;,&#8221;en_GB.UTF-8&#8221;) when you edit your &#8216;Internationalization Options&#8217;.</p>
+
+<p>Now update your RPi:</p>
+<div class='highlight'><pre><code class='bash'>sudo apt-get update
+sudo apt-get upgrade
+</code></pre></div>
+<p>Install some essential tools:</p>
+<div class='highlight'><pre><code class='bash'>sudo apt-get install screen vim git-core htop
+</code></pre></div>
+<p><span id='install_wiringpi'>Install WiringPi</span></p>
+<div class='highlight'><pre><code class='bash'>mkdir div
+<span class='nb'>cd </span>div
+git clone git://git.drogon.net/wiringPi
+<span class='nb'>cd </span>wiringPi
+sudo ./build
+</code></pre></div>
+<p>Test WiringPi</p>
+<div class='highlight'><pre><code class='bash'>gpio -v
+gpio readall
+</code></pre></div>
+<p>It should output something like this:</p>
+<div class='highlight'><pre><code class='bash'>+----------+-Rev2-+------+--------+------+-------+
+| wiringPi | GPIO | Phys | Name   | Mode | Value |
++----------+------+------+--------+------+-------+
+|      0   |  17  |  11  | GPIO 0 | IN   | Low   |
+|      1   |  18  |  12  | GPIO 1 | IN   | Low   |
+|      2   |  27  |  13  | GPIO 2 | IN   | Low   |
+|      3   |  22  |  15  | GPIO 3 | IN   | Low   |
+|      4   |  23  |  16  | GPIO 4 | IN   | Low   |
+|      5   |  24  |  18  | GPIO 5 | IN   | Low   |
+|      6   |  25  |  22  | GPIO 6 | IN   | Low   |
+|      7   |   4  |   7  | GPIO 7 | IN   | Low   |
+|      8   |   2  |   3  | SDA    | IN   | High  |
+|      9   |   3  |   5  | SCL    | IN   | High  |
+|     10   |   8  |  24  | CE0    | IN   | Low   |
+|     11   |   7  |  26  | CE1    | IN   | Low   |
+|     12   |  10  |  19  | MOSI   | IN   | Low   |
+|     13   |   9  |  21  | MISO   | IN   | Low   |
+|     14   |  11  |  23  | SCLK   | IN   | Low   |
+|     15   |  14  |   8  | TxD    | ALT0 | High  |
+|     16   |  15  |  10  | RxD    | ALT0 | High  |
+|     17   |  28  |   3  | GPIO 8 | IN   | Low   |
+|     18   |  29  |   4  | GPIO 9 | IN   | Low   |
+|     19   |  30  |   5  | GPIO10 | IN   | Low   |
+|     20   |  31  |   6  | GPIO11 | IN   | Low   |
++----------+------+------+--------+------+-------+
+</code></pre></div>
+<h2 id='sensors'>Sensors</h2>
+
+<p>I bought the following sensors and got them working with the RPi:</p>
+
+<ul>
+<li>Temperature: DS18B20</li>
+
+<li>433MHz Radio Sender/Receiver (just search ebay)</li>
+
+<li>RFID Reader: RDM6300</li>
+
+<li>Ultrasonic Sound (distance sensor): HC-SR04</li>
+</ul>
+
+<hr>
+<p class="tags"><small>
+		Tags: <a href="/tag/RaspberryPi.html" rel="tag">RaspberryPi</a>, <a href="/tag/Raspian.html" rel="tag">Raspian</a>, <a href="/tag/WiringPi.html" rel="tag">WiringPi</a></small>
+		</p>
+ <div id="disqus_thread"></div>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</div>
+
+    </div>
+
+
+    <div class="container footer">
+         <p>Christoph Gross | chris (at) gross-it.com | <a href="https://github.com/cgrossde">github.com/cgrossde</a>
+          </p>
+    </div>
+
+
+
+    <!-- Load JS files -->
+    <script src="js/vendor/jquery/jquery-1.10.2.min.js"></script>
+    <script src="js/vendor/bootstrap/bootstrap.min.js"></script>
+    <script src="js/plugins/jquery.fancybox.min.js"></script>
+    <script src="js/script.js"></script>
+  </body>
+
+</html>
