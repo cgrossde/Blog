@@ -7817,7 +7817,7 @@ ul.posts span {
 }
 
 .post code {
-  padding: 0 .2em;
+  padding: 0 0;
 }
 
 .navbar .container .navbar-nav > li > a {
