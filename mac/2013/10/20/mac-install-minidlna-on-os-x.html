@@ -110,6 +110,7 @@ sudo cp minidlnad /usr/bin
 
 <p>Copy <code>sudo cp minidlna.conf /etc</code> and adjust the config file or just create a new file <code>/etc/minidlna.conf</code>:</p>
 <div class='highlight'><pre><code class='bash'><span class='nv'>media_dir</span><span class='o'>=</span>V,/PATH/TO/YOUR/VIDEO/FOLDER
+<span class='nv'>user</span><span class='o'>=</span>YOURUSER
 <span class='nv'>db_dir</span><span class='o'>=</span>/usr/share/minidlna/db
 <span class='nv'>log_dir</span><span class='o'>=</span>/usr/share/minidlna/log
 <span class='nv'>inotify</span><span class='o'>=</span>yes
@@ -119,10 +120,11 @@ sudo cp minidlnad /usr/bin
 <p>Create the necessary directories:</p>
 <div class='highlight'><pre><code class='bash'>sudo mkdir -p /usr/share/minidlna/db
 sudo mkdir -p /usr/share/minidlna/log
+sudo chown -R <span class='o'>[</span>YOURUSER<span class='o'>]</span> /usr/share/minidlna
 </code></pre></div>
 <h2 id='startstop_server'>Start/Stop Server</h2>
 
-<p><strong>Start</strong> the minidlna server: <code>sudo minidlna</code> <br /><strong>Stop</strong> the minidlna server: <code>sudo pkill minidlna</code></p>
+<p><strong>Start</strong> the minidlna server: <code>minidlna</code> <br /><strong>Stop</strong> the minidlna server: <code>pkill minidlna</code></p>
 
 <p>If you experience any problems check the logfile in <code>/usr/share/minidlna/log</code>.</p>
 
