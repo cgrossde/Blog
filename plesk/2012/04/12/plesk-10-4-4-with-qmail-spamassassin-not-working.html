@@ -53,11 +53,14 @@
 <p class="meta">12 Apr 2012</p>
 
 <div class="post">
-<p>I switched from postfix to qmail by using the autoinstaller and noticed my mails weren&#8217;t scanned for spam anymore. I tried this:</p>
+
+<p>I switched from postfix to qmail by using the autoinstaller and noticed my mails weren’t scanned for spam anymore. I tried this:</p>
 <div class='highlight'><pre><code class='bash'>/usr/local/psa/admin/sbin/mchk --with-spam
 </code></pre></div>
-<p>but that didn&#8217;t fix the problem either. After some digging and switching between postfix (SA worked) and qmail I found the reason. The mail-handler for spam was disabled when using qmail. Since plesk 10.4.x the mail-handlers are stored in a sql database (/var/lib/plesk/mail/handlers/handlers.db)</p>
-<strong>Here's how you can check if that's the problem in your case:</strong><div class='highlight'><pre><code class='bash'>sqlite3 /var/lib/plesk/mail/handlers/handlers.db
+<p>but that didn’t fix the problem either. After some digging and switching between postfix (SA worked) and qmail I found the reason. The mail-handler for spam was disabled when using qmail. Since plesk 10.4.x the mail-handlers are stored in a sql database (/var/lib/plesk/mail/handlers/handlers.db)</p>
+
+<p><strong>Here&#39;s how you can check if that&#39;s the problem in your case:</strong></p>
+<div class='highlight'><pre><code class='bash'>sqlite3 /var/lib/plesk/mail/handlers/handlers.db
 SQLite version 3.7.3
 Enter <span class='s2'>&quot;.help&quot;</span> <span class='k'>for </span>instructions
 Enter SQL statements terminated with a <span class='s2'>&quot;;&quot;</span>
@@ -74,7 +77,9 @@ queue|type|enabled|priority|name|address|executable|context
 ...
 </code></pre></div>
 <p>As you can see the third column defines if the handler is enabled or not. And after switching to qmail all the spam handlers ended up disabled.</p>
-<strong>How to fix it:</strong><div class='highlight'><pre><code class='bash'><span class='c'># Make backup of your handlers db !!!</span>
+
+<p><strong>How to fix it:</strong></p>
+<div class='highlight'><pre><code class='bash'><span class='c'># Make backup of your handlers db !!!</span>
 cp /var/lib/plesk/mail/handlers/handlers.db /var/lib/plesk/mail/handlers/handlers.db.bak
 <span class='c'># Open Database</span>
 sqlite3 /var/lib/plesk/mail/handlers/handlers.db
@@ -90,12 +95,15 @@ sqlite&amp;gt; <span class='k'>select</span> * from handlers limit 5;
 2|1|1|10|spam|mail1@yourdomain.com|/opt/psa/handlers/hooks/spam|text
 2|1|1|10|spam|mail2@yourdomain.com|/opt/psa/handlers/hooks/spam|text
 2|1|1|10|spam|mail3@yourdomain.com|/opt/psa/handlers/hooks/spam|text
-</code></pre></div><strong> That's it!</strong>
+</code></pre></div>
+<p><strong> That&#39;s it!</strong></p>
+
 <p>See also: <a href='http://kb.parallels.com/en/113664'>http://kb.parallels.com/en/113664</a> - DO NOT FOLLOW THESE INSTRUCTIONS, in my case mchk did NOT regenerate the mail handler-table, so make a backup first!</p>
+
 
 <hr>
 <p class="tags"><small>
-		Tags: <a href="/tag/plesk.html" rel="tag">plesk</a>, <a href="/tag/qmail.html" rel="tag">qmail</a>, <a href="/tag/spamassassin.html" rel="tag">spamassassin</a></small>
+		Tags: <a href="/tag/Plesk.html" rel="tag">Plesk</a>, <a href="/tag/qmail.html" rel="tag">qmail</a>, <a href="/tag/Spamassassin.html" rel="tag">Spamassassin</a></small>
 		</p>
  <div id="disqus_thread"></div>
     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>

@@ -53,6 +53,7 @@
 <p class="meta">31 May 2012</p>
 
 <div class="post">
+
 <p>There is an easy way to integrate ClamAV as a plugin into spamassassin.</p>
 
 <p>Install ClamAV</p>
@@ -83,11 +84,9 @@ add_header all Virus _CLAMAVRESULT_
 <p>Restart spamassassin</p>
 <div class='highlight'><pre><code class='bash'>/etc/init.d/psa-spamassassin restart
 </code></pre></div>
-<p>Test if it works with the <a href='http://de.wikipedia.org/wiki/EICAR-Testdatei'>EICAR-Test</a>:</p>
-
-<p><div class='highlight'><pre><code class='bash'><span class='nb'>echo</span> &amp;#039;X5O!P%@AP<span class='o'>[</span>4<span class='se'>\P</span>ZX54<span class='o'>(</span>P^<span class='o'>)</span>7CC<span class='o'>)</span>7<span class='o'>}</span><span class='nv'>$EICAR</span>-STANDARD-ANTIVIRUS-TEST-FILE!<span class='nv'>$H</span>+H*&amp;#039; | spamassassin
-</code></pre></div></p>
-
+<p>Test if it works with the <a href="http://de.wikipedia.org/wiki/EICAR-Testdatei">EICAR-Test</a>:</p>
+<div class='highlight'><pre><code class='bash'><span class='nb'>echo</span> &amp;#039;X5O!P%@AP<span class='o'>[</span>4<span class='se'>\P</span>ZX54<span class='o'>(</span>P^<span class='o'>)</span>7CC<span class='o'>)</span>7<span class='o'>}</span><span class='nv'>$EICAR</span>-STANDARD-ANTIVIRUS-TEST-FILE!<span class='nv'>$H</span>+H*&amp;#039; | spamassassin
+</code></pre></div>
 <p>Your output should look something like this:</p>
 <div class='highlight'><pre><code class='bash'>Received: from localhost by domain.com
         with SpamAssassin;
@@ -153,9 +152,10 @@ X5O!P%@AP<span class='o'>[</span>4<span class='se'>\P</span>ZX54<span class='o'>
 
 ------------<span class='o'>=</span>_4FC7A89F.14EFACC8--
 </code></pre></div>
-<p>&#160;</p>
+<p> </p>
 
-<p>&#160;</p>
+<p> </p>
+
 
 <hr>
 <p class="tags"><small>

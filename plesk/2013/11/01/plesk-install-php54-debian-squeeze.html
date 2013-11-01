@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="google-site-verification" content="OHM4kICBE2MaQ9U7G1F07CMG2wEzl46eWq7tNGAyWjc" />
+    <title>
+      Plesk: Install PHP 5.4 on Debian Squeeze / Add new PHP version
+    </title>
+    <base href="http://chris-labs.de/" />
+    <meta name="viewport" content="width=device-width">
+    <!-- Compiled SCSS file -->
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+      var shiftWindow = function() { scrollBy(0, -60) };
+      window.addEventListener("hashchange", shiftWindow);
+      function load() { if (window.location.hash) shiftWindow(); }
+    </script>
+  </head>
+  <body onload="load()">
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+          </button>
+          <a class="navbar-brand" href="http://chris-labs.de/"><img src="images/profil_sw.png" alt="Profilbild" />&nbsp;<strong>CHRIS</strong>labs</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active">
+              <a href="http://chris-labs.de/">Home</a>
+            </li>
+            <!--li>
+              <a href="#about">About</a>
+            </li>
+            <li>
+              <a href="#contact">Projects</a>
+            </li-->
+          </ul>
+        </div>
+        <!--/.nav-collapse -->
+      </div>
+    </div>
+    <div class="content container">
+      <h1>Plesk: Install PHP 5.4 on Debian Squeeze / Add new PHP version</h1>
+<p class="meta">01 Nov 2013</p>
+
+<div class="post">
+
+<p>Since Plesk 11 it is possible to have multiple PHP-Versions running at once and you can select for each domain which version to use. <a class='fancybox' href='files/2013/2013_11_01_Plesk_php_version_selection.png' title=''><img alt='' class='center' src='thumbs/2013_11_01_Plesk_php_version_selection_639x110.png' /></a></p>
+
+<h2 id="compile__install_php">Compile &amp; install PHP</h2>
+
+<p>Install prequisites: I had to install the following packages on Debian Squeeze to successfully configure PHP. If you missed something <code>configure</code> will abort and notify you.</p>
+<div class='highlight'><pre><code class='bash'>apt-get install checkinstall libxml2-dev libbz2-dev libjpeg62-dev libpng12-dev libgmp3-dev libc-client2007e-dev libsasl2-dev libmcrypt-dev libmysqlclient-dev libiodbc2-dev libpspell-dev libxslt1-dev libxslt1.1
+</code></pre></div>
+<p>Download PHP 5.4 (or whatever version you want to install) from <a href="http://php.net/downloads.php">php.net</a>.</p>
+<div class='highlight'><pre><code class='bash'><span class='nb'>cd</span> /usr/local/src
+mkdir php5.4
+<span class='nb'>cd </span>php5.4
+wget http://us2.php.net/get/php-5.4.21.tar.bz2/from/de2.php.net/mirror
+tar xvjf php-5.4.21.tar.bz2
+<span class='nb'>cd </span>php-5.4.21
+</code></pre></div>
+<p>Configure PHP: You can find the available <code>configure</code> options <a href="http://www.php.net/manual/en/configure.about.php">here</a>.</p>
+<div class='highlight'><pre><code class='bash'>./configure --with-libdir<span class='o'>=</span>lib64 --cache-file<span class='o'>=</span>../config.cache --prefix<span class='o'>=</span>/usr/local/php5421-cgi --with-config-file-path<span class='o'>=</span>/usr/local/php5421-cgi/etc --disable-debug --with-pic --disable-rpath --with-bz2 --with-curl --with-freetype-dir<span class='o'>=</span>/usr/local/php5421-cgi --with-png-dir<span class='o'>=</span>/usr/local/php5421-cgi --enable-gd-native-ttf --without-gdbm --with-gettext --with-gmp --with-iconv --with-jpeg-dir<span class='o'>=</span>/usr/local/php5421-cgi --with-openssl --with-pspell --with-pcre-regex --with-zlib --enable-exif --enable-ftp --enable-sockets --enable-sysvsem --enable-sysvshm --enable-sysvmsg --enable-wddx --with-kerberos --with-unixODBC<span class='o'>=</span>/usr --enable-shmop --enable-calendar --without-sqlite3 --with-libxml-dir<span class='o'>=</span>/usr/local/php5421-cgi --with-imap --with-imap-ssl --enable-mbstring --enable-mbregex --with-gd --enable-bcmath --with-xmlrpc --with-ldap --with-ldap-sasl --with-mysql<span class='o'>=</span>/usr --with-mysqli --enable-soap --with-xsl --enable-xmlreader --enable-xmlwriter --enable-pdo --with-pdo-mysql --with-pear<span class='o'>=</span>/usr/local/php5421-cgi/pear --with-mcrypt --enable-intl --enable-zip --without-pdo-sqlite --with-config-file-scan-dir<span class='o'>=</span>/usr/local/php5421-cgi/etc/conf.d
+</code></pre></div>
+<p>Make sure to use a <strong>prefix</strong>, in my case I chose <code>--prefix=/usr/local/php5421-cgi</code>. This defines the directory where this PHP version is going to be installed. If <code>configure</code> aborts with an error that something is missing, check this <a href="http://www.robo47.net/text/6-PHP-Configure-und-Compile-Fehler#mysql">page</a> out.</p>
+
+<p>Compile PHP:</p>
+<div class='highlight'><pre><code class='bash'>make
+</code></pre></div>
+<p>Install PHP:</p>
+<div class='highlight'><pre><code class='bash'>checkinstall -D make install
+</code></pre></div>
+<p>Give your package an meaningfull name like <code>php-5.4.21-custom</code> so you can identify it and if necessary remove it with <code>dpkg -r php-5.4.21-custom</code>.</p>
+
+<p>Copy the file <code>php.ini-production</code> from your source folder to the install location of php:</p>
+<div class='highlight'><pre><code class='bash'>cp /usr/local/src/php5.4/php-5.4.21/php.ini-production /usr/local/php5421-cgi/etc/php.ini
+</code></pre></div>
+<h2 id="install_apc">Install APC</h2>
+
+<p>Alternative PHP Cache will speed up a lot of PHP applications, you can install it like this:</p>
+<div class='highlight'><pre><code class='bash'>/usr/local/php5421-cgi/bin/pecl install apc
+mkdir /usr/local/php5421-cgi/etc/conf.d
+<span class='nb'>echo</span> <span class='s1'>&#39;extension=apc.so&#39;</span> &gt; /usr/local/php5421-cgi/etc/conf.d/apc.ini
+</code></pre></div>
+<p>Make sure to use the full path to <code>pecl</code>, if you fail to do so you might install APC for another php version running on your system.</p>
+
+<h2 id="add_new_php_version_to_plesk">Add new PHP version to plesk</h2>
+
+<p>Add new PHP Version</p>
+<div class='highlight'><pre><code class='bash'>/usr/local/psa/bin/php_handler --add -displayname <span class='s1'>&#39;php-5.4.21-custom&#39;</span> -path /usr/local/php5421-cgi/bin/php-cgi -phpini /usr/local/php5421-cgi/etc/php.ini -type fastcgi -id <span class='s1'>&#39;php-5.4.21-custom&#39;</span>
+</code></pre></div>
+<p>You can find the documentation for <code>php_handler</code> <a href="http://download1.parallels.com/Plesk/Doc/en-US/online/plesk-administrator-guide/index.htm?fileName=72042.htm">here</a>.</p>
+
+
+<hr>
+<p class="tags"><small>
+		Tags: <a href="/tag/Plesk.html" rel="tag">Plesk</a>, <a href="/tag/PHP.html" rel="tag">PHP</a>, <a href="/tag/Debian.html" rel="tag">Debian</a></small>
+		</p>
+ <div id="disqus_thread"></div>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</div>
+
+    </div>
+
+
+    <div class="container footer">
+         <p>Christoph Gross | chris (at) gross-it.com | <a href="https://github.com/cgrossde">github.com/cgrossde</a>
+          </p>
+    </div>
+
+
+
+    <!-- Load JS files -->
+    <script src="js/vendor/jquery/jquery-1.10.2.min.js"></script>
+    <script src="js/vendor/bootstrap/bootstrap.min.js"></script>
+    <script src="js/plugins/jquery.fancybox.min.js"></script>
+    <script src="js/script.js"></script>
+  </body>
+
+</html>

@@ -53,12 +53,13 @@
 <p class="meta">31 May 2012</p>
 
 <div class="post">
-<p>Sometimes it&#8217;s useful to have a named pipe, as you can see in this MySQL-backup example. We create a backup of the DB and directly compress the data:</p>
+
+<p>Sometimes it’s useful to have a named pipe, as you can see in this MySQL-backup example. We create a backup of the DB and directly compress the data:</p>
 <div class='highlight'><pre><code class='bash'>gzip -9 -c &lt; mysql_pipe &gt; <span class='sb'>`</span>date <span class='s2'>&quot;+%Y_%m_%d&quot;</span><span class='sb'>`</span>_db.gz &amp; mysqldump --opt --all-databases -uadmin -p<span class='sb'>`</span>cat /etc/psa/.psa.shadow<span class='sb'>`</span> &gt; mysql_pipe
 </code></pre></div>
-<p>I named the pipe &#8220;mysql_pipe&#8221; and use it to gzip my mysql backup.</p>
+<p>I named the pipe “mysql_pipe” and use it to gzip my mysql backup.</p>
 
-<p>Here&#8217;s how you can create them:</p>
+<p>Here’s how you can create them:</p>
 <div class='highlight'><pre><code class='bash'>mkfifo mysq_pipe
 </code></pre></div>
 

@@ -53,12 +53,13 @@
 <p class="meta">12 Apr 2012</p>
 
 <div class="post">
+
 <p>After upgrading to Plesk 10.4.4 you might be confronted with errors like this:</p>
 <div class='highlight'><pre><code class='bash'>... qmail-queue-handlers<span class='o'>[</span>...<span class='o'>]</span>: SKIP during call <span class='s1'>&#39;check-quota&#39;</span> handler
 </code></pre></div>
-<p>In my case it was because the check-quota handler didn&#8217;t exist, so I disabled it. With Plesk 10.4.x the mail handlers are stored in a sql database.</p>
+<p>In my case it was because the check-quota handler didn’t exist, so I disabled it. With Plesk 10.4.x the mail handlers are stored in a sql database.</p>
 
-<p>Here&#8217;s how you can view them:</p>
+<p>Here’s how you can view them:</p>
 <div class='highlight'><pre><code class='bash'>sqlite3 /var/lib/plesk/mail/handlers/handlers.db
 SQLite version 3.7.3
 Enter <span class='s2'>&quot;.help&quot;</span> <span class='k'>for </span>instructions
@@ -75,7 +76,7 @@ queue|type|enabled|priority|name|address|executable|context
 2|1|1|10|spam|mail3@yourdomain.com|/opt/psa/handlers/hooks/spam|text
 ...
 </code></pre></div>
-<p>As you can see the check-quota handler is stored at <code>/opt/psa/handlers/hooks/</code> In my case /opt/psa/handlers/hooks/check-quota was a broken symlink and I don&#8217;t know where to get it but to avoid the errors <strong>you can disable the check-quota handler:
+<p>As you can see the check-quota handler is stored at <code>/opt/psa/handlers/hooks/</code> In my case /opt/psa/handlers/hooks/check-quota was a broken symlink and I don’t know where to get it but to avoid the errors <strong>you can disable the check-quota handler:
 </strong></p>
 <div class='highlight'><pre><code class='bash'><span class='c'># Make backup of your handlers db !!!</span>
 cp /var/lib/plesk/mail/handlers/handlers.db /var/lib/plesk/mail/handlers/handlers.db.bak
@@ -94,11 +95,12 @@ sqlite&amp;gt; <span class='k'>select</span> * from handlers limit 5;
 2|1|1|10|spam|mail2@yourdomain.com|/opt/psa/handlers/hooks/spam|text
 2|1|1|10|spam|mail3@yourdomain.com|/opt/psa/handlers/hooks/spam|text
 </code></pre></div>
-<p>Now the check-quota handler isn&#8217;t called anymore and there will be no errors like <code>SKIP during call &#39;check-quota&#39; handler</code> in your log files. You can enable it again when Parallels fixed the issue with: <code>sqlite&amp;gt; update handlers set enabled = 1 where name = &#39;check-quota&#39;;</code></p>
+<p>Now the check-quota handler isn’t called anymore and there will be no errors like <code>SKIP during call &#39;check-quota&#39; handler</code> in your log files. You can enable it again when Parallels fixed the issue with: <code>sqlite&amp;gt; update handlers set enabled = 1 where name = &#39;check-quota&#39;;</code></p>
+
 
 <hr>
 <p class="tags"><small>
-		Tags: <a href="/tag/check-quota.html" rel="tag">check-quota</a>, <a href="/tag/mail%20handlers.html" rel="tag">mail handlers</a>, <a href="/tag/plesk.html" rel="tag">plesk</a></small>
+		Tags: <a href="/tag/check-quota.html" rel="tag">check-quota</a>, <a href="/tag/mail%20handlers.html" rel="tag">mail handlers</a>, <a href="/tag/Plesk.html" rel="tag">Plesk</a></small>
 		</p>
  <div id="disqus_thread"></div>
     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>

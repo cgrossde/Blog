@@ -53,12 +53,13 @@
 <p class="meta">09 Apr 2012</p>
 
 <div class="post">
-<p>Welcome to my first Post. Today I&#8217;m going to show you how to use spamassassin with a global bayes db and modules like pyzor, razor and iXhash which are collaborative spam detections systems. I use a Debian 6 system with Plesk 10 but it works on Plesk 9 too and should work on any other major distribution. (Also tested and working with Plesk 10 and 11).</p>
+
+<p>Welcome to my first Post. Today I’m going to show you how to use spamassassin with a global bayes db and modules like pyzor, razor and iXhash which are collaborative spam detections systems. I use a Debian 6 system with Plesk 10 but it works on Plesk 9 too and should work on any other major distribution. (Also tested and working with Plesk 10 and 11).</p>
 
 <p>Make sure you have psa-spamassassin installed</p>
 <div class='highlight'><pre><code class='bash'>apt-get install psa-spamassassin
 </code></pre></div>
-<p>Let&#8217;s start:</p>
+<p>Let’s start:</p>
 <div class='highlight'><pre><code class='bash'>apt-get install pyzor razor
 </code></pre></div>
 <p>Setup razor:</p>
@@ -150,7 +151,7 @@ bayes_file_mode 0777
 <p>Restart spamassassin</p>
 <div class='highlight'><pre><code class='bash'>/etc/init.d/psa-spamassassin restart
 </code></pre></div>
-<p>Make sure you have activated &#8220;Switch on server-wide SpamAssassin&#8221; spam filtering and deactivated &#8220;Apply individual settings to spam filtering&#8221; in your Plesk Panel (Tools&#38;Settings &#62; Spam Filter Settings).</p>
+<p>Make sure you have activated “Switch on server-wide SpamAssassin” spam filtering and deactivated “Apply individual settings to spam filtering” in your Plesk Panel (Tools&amp;Settings &gt; Spam Filter Settings).</p>
 
 <p>All emails send to you should now contain this in their header:</p>
 <div class='highlight'><pre><code class='bash'>X-Spam-Checker-Version: 	SpamAssassin 3.3.1 <span class='o'>(</span>2010-03-16<span class='o'>)</span> on yourserver.net
@@ -163,11 +164,12 @@ X-Spam-Pyzor: 	Reported 0 times.
 </code></pre></div>
 <p>If you have questions or problems, just leave a comment.</p>
 
-<p>&#160;</p>
+<p> </p>
+
 
 <hr>
 <p class="tags"><small>
-		Tags: <a href="/tag/debian.html" rel="tag">debian</a>, <a href="/tag/ixhash.html" rel="tag">ixhash</a>, <a href="/tag/plesk.html" rel="tag">plesk</a>, <a href="/tag/pyzor.html" rel="tag">pyzor</a>, <a href="/tag/razor.html" rel="tag">razor</a>, <a href="/tag/spamassassin.html" rel="tag">spamassassin</a></small>
+		Tags: <a href="/tag/Debian.html" rel="tag">Debian</a>, <a href="/tag/ixhash.html" rel="tag">ixhash</a>, <a href="/tag/Plesk.html" rel="tag">Plesk</a>, <a href="/tag/pyzor.html" rel="tag">pyzor</a>, <a href="/tag/razor.html" rel="tag">razor</a>, <a href="/tag/Spamassassin.html" rel="tag">Spamassassin</a></small>
 		</p>
  <div id="disqus_thread"></div>
     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>

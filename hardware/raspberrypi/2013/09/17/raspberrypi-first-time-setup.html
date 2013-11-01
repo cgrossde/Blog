@@ -53,17 +53,18 @@
 <p class="meta">17 Sep 2013</p>
 
 <div class="post">
-<p>I spent the last six months in Singapore working on the <a href='http://en.wikipedia.org/wiki/Industry_4.0'>Internet of Things</a> and <a href='http://en.wikipedia.org/wiki/Machine-to-Machine'>M2M</a>. Luckily this also involved playing around with a Raspberry Pi and hooking it up to some sensors. In this post I will describe my basic setup of the RPi and which sensors you might want to buy.</p>
 
-<h2 id='install_raspian'>Install Raspian</h2>
+<p>I spent the last six months in Singapore working on the <a href="http://en.wikipedia.org/wiki/Industry_4.0">Internet of Things</a> and <a href="http://en.wikipedia.org/wiki/Machine-to-Machine">M2M</a>. Luckily this also involved playing around with a Raspberry Pi and hooking it up to some sensors. In this post I will describe my basic setup of the RPi and which sensors you might want to buy.</p>
+
+<h2 id="install_raspian">Install Raspian</h2>
 
 <p>Usually I only access the RPi via SSH. So here the process on how to set it up without keyboard or monitor:</p>
 
-<p>Goto <a href='http://www.raspberrypi.org/downloads'>http://www.raspberrypi.org/downloads</a> and download the latest Raspian Image. Copy the image to a four or eight GB SD-card (If you need help check this page out: <a href='http://elinux.org/RPi_Easy_S'>Easy SD Card Setup</a>.</p>
+<p>Goto <a href="http://www.raspberrypi.org/downloads">http://www.raspberrypi.org/downloads</a> and download the latest Raspian Image. Copy the image to a four or eight GB SD-card (If you need help check this page out: <a href="http://elinux.org/RPi_Easy_S">Easy SD Card Setup</a>.</p>
 
-<h2 id='connect_to_the_rpi'>Connect to the RPi</h2>
+<h2 id="connect_to_the_rpi">Connect to the RPi</h2>
 
-<p>In the latest image of Raspbian SSH is already activated. If you use internet sharing on your Mac as described <a href='http://www.mactip.net/share-internet-connection-mac/'>here</a> you will now need to find out the RPis IP. Enter <code>ifconfig</code> in a Terminal and you should find something like this</p>
+<p>In the latest image of Raspbian SSH is already activated. If you use internet sharing on your Mac as described <a href="http://www.mactip.net/share-internet-connection-mac/">here</a> you will now need to find out the RPis IP. Enter <code>ifconfig</code> in a Terminal and you should find something like this</p>
 <div class='highlight'><pre><code class='bash'>...
 bridge0: <span class='nv'>flags</span><span class='o'>=</span>8863&lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
 	ether ac:de:48:25:33:fe
@@ -85,18 +86,18 @@ Nmap <span class='k'>done</span>: 255 IP addresses <span class='o'>(</span>2 hos
 </code></pre></div>
 <p>So there are two hosts in the network: our Mac (192.168.2.1) and the other one can only be the RPi (192.168.2.2)</p>
 
-<p>If you don&#8217;t have nmap, you need to try out one IP after another starting with 192.168.2.2.</p>
+<p>If you don’t have nmap, you need to try out one IP after another starting with 192.168.2.2.</p>
 
-<p>Enter <code>ssh pi@192.168.2.2 -o &quot;UserKnownHostsFile /dev/null&quot;</code> to login to you RPi. Password is &#8216;raspberry&#8217;. The option <code>-o &quot;UserKnownHostsFile /dev/null&quot;</code> will prevent that the RPi is added to your known_hosts file because the RPis signature will change in the next step.</p>
+<p>Enter <code>ssh pi@192.168.2.2 -o &quot;UserKnownHostsFile /dev/null&quot;</code> to login to you RPi. Password is ‘raspberry’. The option <code>-o &quot;UserKnownHostsFile /dev/null&quot;</code> will prevent that the RPi is added to your known_hosts file because the RPis signature will change in the next step.</p>
 
-<h2 id='setup_the_rpi'>Setup the RPi</h2>
+<h2 id="setup_the_rpi">Setup the RPi</h2>
 
 <p>First regenerate public/private keys</p>
 <div class='highlight'><pre><code class='bash'>sudo rm /etc/ssh/ssh_host_* <span class='o'>&amp;&amp;</span> sudo dpkg-reconfigure openssh-server
 </code></pre></div>
 <p>After that <code>logout</code> and login(<code>ssh pi@192.168.2.2</code>) again.</p>
 
-<p>Now you can run the RPis config by entering <code>sudo raspi-config</code> which allows you to expand the filesystem to use the whole SD card. You should also set the &#8216;Internationalization Options&#8217;. You will get some errors like this:</p>
+<p>Now you can run the RPis config by entering <code>sudo raspi-config</code> which allows you to expand the filesystem to use the whole SD card. You should also set the ‘Internationalization Options’. You will get some errors like this:</p>
 <div class='highlight'><pre><code class='bash'>perl: warning: Setting locale failed.
 perl: warning: Please check that your locale settings:
 	<span class='nv'>LANGUAGE</span> <span class='o'>=</span> <span class='o'>(</span><span class='nb'>unset</span><span class='o'>)</span>,
@@ -110,7 +111,7 @@ locale: Cannot <span class='nb'>set </span>LC_ALL to default locale: No such fil
 /usr/bin/locale: Cannot <span class='nb'>set </span>LC_CTYPE to default locale: No such file or directory
 /usr/bin/locale: Cannot <span class='nb'>set </span>LC_ALL to default locale: No such file or directory
 </code></pre></div>
-<p>So be sure to add the locales shown (&#8220;de_DE.UTF-8&#8221;,&#8221;en_GB.UTF-8&#8221;) when you edit your &#8216;Internationalization Options&#8217;.</p>
+<p>So be sure to add the locales shown (“de_DE.UTF-8”,”en_GB.UTF-8”) when you edit your ‘Internationalization Options’.</p>
 
 <p>Now update your RPi:</p>
 <div class='highlight'><pre><code class='bash'>sudo apt-get update
@@ -119,7 +120,7 @@ sudo apt-get upgrade
 <p>Install some essential tools:</p>
 <div class='highlight'><pre><code class='bash'>sudo apt-get install screen vim git-core htop
 </code></pre></div>
-<p><span id='install_wiringpi'>Install WiringPi</span></p>
+<p id="install_wiringpi">Install WiringPi</p>
 <div class='highlight'><pre><code class='bash'>mkdir div
 <span class='nb'>cd </span>div
 git clone git://git.drogon.net/wiringPi
@@ -157,7 +158,7 @@ gpio readall
 |     20   |  31  |   6  | GPIO11 | IN   | Low   |
 +----------+------+------+--------+------+-------+
 </code></pre></div>
-<h2 id='sensors'>Sensors</h2>
+<h2 id="sensors">Sensors</h2>
 
 <p>I bought the following sensors and got them working with the RPi:</p>
 
@@ -170,6 +171,7 @@ gpio readall
 
 <li>Ultrasonic Sound (distance sensor): HC-SR04</li>
 </ul>
+
 
 <hr>
 <p class="tags"><small>
