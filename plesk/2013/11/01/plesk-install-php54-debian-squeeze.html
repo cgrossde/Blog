@@ -58,13 +58,12 @@
 
 <h2 id="compile__install_php">Compile &amp; install PHP</h2>
 
-<p>Install prequisites: I had to install the following packages on Debian Squeeze to successfully configure PHP. If you missed something <code>configure</code> will abort and notify you.</p>
+<p>Install prequisites: I had to install the following packages on Debian Squeeze to successfully compile PHP. If you missed something <code>configure</code> will abort and notify you.</p>
 <div class='highlight'><pre><code class='bash'>apt-get install checkinstall libxml2-dev libbz2-dev libjpeg62-dev libpng12-dev libgmp3-dev libc-client2007e-dev libsasl2-dev libmcrypt-dev libmysqlclient-dev libiodbc2-dev libpspell-dev libxslt1-dev libxslt1.1
 </code></pre></div>
 <p>Download PHP 5.4 (or whatever version you want to install) from <a href="http://php.net/downloads.php">php.net</a>.</p>
-<div class='highlight'><pre><code class='bash'><span class='nb'>cd</span> /usr/local/src
-mkdir php5.4
-<span class='nb'>cd </span>php5.4
+<div class='highlight'><pre><code class='bash'>mkdir -p /usr/local/src/php5.4
+<span class='nb'>cd</span> /usr/local/src/php5.4
 wget http://us2.php.net/get/php-5.4.21.tar.bz2/from/de2.php.net/mirror
 tar xvjf php-5.4.21.tar.bz2
 <span class='nb'>cd </span>php-5.4.21
