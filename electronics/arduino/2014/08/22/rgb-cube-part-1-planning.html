@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="google-site-verification" content="OHM4kICBE2MaQ9U7G1F07CMG2wEzl46eWq7tNGAyWjc" />
+    <title>
+      RGB-Cube Part 1: Planning
+    </title>
+    <base href="http://chris-labs.de/" />
+    <meta name="viewport" content="width=device-width">
+    <!-- Compiled SCSS file -->
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+      var shiftWindow = function() { scrollBy(0, -60) };
+      window.addEventListener("hashchange", shiftWindow);
+      function load() { if (window.location.hash) shiftWindow(); }
+    </script>
+  </head>
+  <body onload="load()">
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+          </button>
+          <a class="navbar-brand" href="http://chris-labs.de/"><img src="images/profil_sw.png" alt="Profilbild" />&nbsp;<strong>CHRIS</strong>labs</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active">
+              <a href="http://chris-labs.de/">Home</a>
+            </li>
+            <!--li>
+              <a href="#about">About</a>
+            </li>
+            <li>
+              <a href="#contact">Projects</a>
+            </li-->
+          </ul>
+        </div>
+        <!--/.nav-collapse -->
+      </div>
+    </div>
+    <div class="content container">
+      <h1>RGB-Cube Part 1: Planning</h1>
+<p class="meta">22 Aug 2014</p>
+
+<div class="post">
+
+<p><a class='fancybox' href='files/2014/RGB-Cube_green.JPG' title=''><img alt='' class='right' src='thumbs/RGB-Cube_green_400x300.JPG' /></a></p>
+
+<p>I have been programming and tinkering with Arduinos or RPis for a long time but I never did anything more complex than reading sensors or creating my smart student room with <a href="/electronics/raspberrypi/2013/10/10/raspberrypi-433mhz-switch-control.html">433 MHz radio switches and a RPi</a>. All of this could be done with almost no electronic knowledge or any deeper understanding because the sensors involved were commonly used and libraries and schematics for them are all over the internet. But one day in late 2013 I stumbled over Kevin Darrahs Youtube videos on how he created an 8x8x8 RGB Cube ( <a href="http://www.kevindarrah.com/?cat=99">http://www.kevindarrah.com/?cat=99</a> ). They are well done and he explains a great deal about the tricks and pitfalls of creating a RGB Cube. This really inspired me to build my own.</p>
+
+<p>There are lots of ways to build an LED Cube. Before you start, assess how many LEDs you want to control and how fast you need to refresh the state of your LEDs for dimming and animations. In my case I had a cube of 4x4x4 RGB LEDs which are in total 192 LEDs (64 for every color). I wanted to control them with an Arduino Nano v3.0 which I had lying around. It turned out that there are not 192 pins on this Arduino, so we need a way to control all 192 LEDs with less pins.</p>
+
+<p>This is when you make your first design decision: Charlieplexing, Shiftregisters or LED-Driver-ICs ?</p>
+
+<h2 id="charliplexing">Charliplexing</h2>
+
+<p>This allows you to control a lot of LEDs with a few IOs and some resistor. No other ICs needed. It’s an intresting topic and you can read more <a href="http://en.wikipedia.org/wiki/Charlieplexing">on Wikipedia</a>. But there are some drawbacks:</p>
+
+<ul>
+<li>The refresh rate is low and charliplexed RGB Cubes tend to flicker</li>
+
+<li>High peak current on single LEDs</li>
+
+<li>Some LEDs can light dimmly when not desired</li>
+
+<li>Complexity: the bigger the matrix the more complex gets the circuit</li>
+</ul>
+
+<p>I wanted a nice and smooth RGB Cube and a low refresh rate and undesired light LEDs were not an option, so I discarded this method. If you got intrested check out this Instructable on how to build an 4x4x4 LED Cube.</p>
+
+<h2 id="shift_registers">Shift registers</h2>
+
+<p>Shift registers allow you enter data in serial and output data in parallel. The most basic shift register has two inputs and several outputs. One input for data and another one for the clock. If you have a shift register with 8 outputs and want to set the first 4 outputs low and the last 4 outputs high you would do the following:</p>
+
+<ul>
+<li>Put clock low and data high</li>
+
+<li>Put clock high for a short amount of time</li>
+
+<li>Now the first output is set high</li>
+
+<li>Put the clock high and low three more times</li>
+</ul>
+
+<p>Now the first 4 Outputs are high, we are not done yet. Everytime you put the clock high for a short amount of time the shift register reads the data line. Then it shifts all outputs one up and sets the first output high or low depending on the data line. To get the desired state of our shift register( first 4 low, last 4 high) we need to set the data line low and clock the shift register 4 more times. This will shift the 4 high outputs to the end and enter 4 low outputs at the beginning. Here is a GIF with another example (it sets the output to 00110101):</p>
+
+<p><img src="http://chris-labs.de//files/2014/ShiftRegisterWM.gif" alt="Shift register example" /></p>
+
+<p>Shift registers usually have some more features:</p>
+
+<p>A <strong>serial output line</strong>. After you put data in 8 times every new clock cycle will push one output state at the end of the shift register out to the serial output line. This allows you to chain multiple shift registers.</p>
+
+<p>Another feature is the <strong>latch or shift register clock line</strong>. If you have 8 leds connected to a shift register and you want to put the first 4 low and the last 4 high. Then you need to shift 1111000 to the register. In the process you can observer that the first 4 leds start to light up and then move to the end of the line with every clock cycle. If you don’t want to have this shift process you use the latch line. You pull the latch line low, and shift your 1111000 to the register. The output will not change until you put the output enable line high again. This way the shift process is not visible.</p>
+
+<p>If you use shift registers for your project you need some transistors after them because they cannot handle the current of several LEDs lit at once. This is why I used Darlington Transistor Arrays. They come as an IC and you don’t have to solder a lot of single transistors and pull-up/down resistors to your board. After the transistor array you also need some pre-resistors depending on your LED (because they cannot handle 5V). If you are lazy like me, you buy Resistor Array ICs and put them in sockets. This way you can easyly solder the socket and exchange the resistor array later to adjust the brightness of your LEDs.</p>
+
+<h2 id="leddriverics">LED-Driver-ICs</h2>
+
+<p>If you don’t want to use Charlieplexing or shift registers then you could also use LED-Driver-ICs. They can be controlled like shift registers and have the darlington transistor array and pre-resistors for the LED already inside. But where is the fun in that? If however you want to use something like this, have a look at the MY9221. They allow you to control 4 RGB LEDs per IC ( in total 16 LEDs) with up to 60mA per LED.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>There are several ways to control mutlitple LEDs. I went for the shift registers because charlieplexing was not an option and LED-Driver-ICs just seemed to simple ;)</p>
+
+
+<hr>
+<p class="tags"><small>
+		Tags: <a href="/tag/Tinkering.html" rel="tag">Tinkering</a>, <a href="/tag/Arduino.html" rel="tag">Arduino</a>, <a href="/tag/LED-Cube.html" rel="tag">LED-Cube</a></small>
+		</p>
+ <div id="disqus_thread"></div>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</div>
+
+    </div>
+
+
+    <div class="container footer">
+         <p>Christoph Gross | chris (at) gross-it.com | <a href="https://github.com/cgrossde">github.com/cgrossde</a>
+          </p>
+    </div>
+
+
+
+    <!-- Load JS files -->
+    <script src="js/vendor/jquery/jquery-1.10.2.min.js"></script>
+    <script src="js/vendor/bootstrap/bootstrap.min.js"></script>
+    <script src="js/plugins/jquery.fancybox.min.js"></script>
+    <script src="js/script.js"></script>
+  </body>
+
+</html>
