@@ -7670,6 +7670,26 @@ td.visible-print {
   font-weight: bold;
 }
 
+.fancygif-container {
+  overflow: hidden;
+}
+
+.fancygif-controls {
+  height: 30px;
+  width: 118px;
+  overflow: hidden;
+  margin: 0 auto;
+  background: #CCC;
+  border-radius: 5px;
+  padding: 4px;
+}
+.fancygif-controls .fancygif-button {
+  display: inline;
+  float: left;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
 /* Code Highlight */
 .highlight {
   margin: 10px;
@@ -7711,6 +7731,18 @@ h2 {
   float: left;
   margin-right: 10px;
   margin-bottom: 15px;
+}
+
+.clear-left {
+  clear: left;
+}
+
+.clear-right {
+  clear: right;
+}
+
+.clear-all {
+  clear: all;
 }
 
 .center {
@@ -7837,9 +7869,18 @@ ul.posts span {
 
 /*****************************************************************************/
 /*
-/* Posts
+/* FancyGallery
 /*
 /*****************************************************************************/
+ul.gallery {
+  list-style: none;
+  text-align: center;
+}
+ul.gallery li {
+  padding: 5px;
+  display: inline-block;
+}
+
 .navbar .container .navbar-nav > li > a {
   color: #FFFFFF;
 }

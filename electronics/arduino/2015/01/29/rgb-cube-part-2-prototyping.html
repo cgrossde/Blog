@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="google-site-verification" content="OHM4kICBE2MaQ9U7G1F07CMG2wEzl46eWq7tNGAyWjc" />
+    <title>
+      RGB-Cube Part 2: Prototype
+    </title>
+    <base href="http://chris-labs.de/" />
+    <meta name="viewport" content="width=device-width">
+    <!-- Compiled SCSS file -->
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+      var shiftWindow = function() { scrollBy(0, -60) };
+      window.addEventListener("hashchange", shiftWindow);
+      function load() { if (window.location.hash) shiftWindow(); }
+    </script>
+  </head>
+  <body onload="load()">
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+          </button>
+          <a class="navbar-brand" href="http://chris-labs.de/"><img src="images/profil_sw.png" alt="Profilbild" />&nbsp;<strong>CHRIS</strong>labs</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active">
+              <a href="http://chris-labs.de/">Home</a>
+            </li>
+            <!--li>
+              <a href="#about">About</a>
+            </li>
+            <li>
+              <a href="#contact">Projects</a>
+            </li-->
+          </ul>
+        </div>
+        <!--/.nav-collapse -->
+      </div>
+    </div>
+    <div class="content container">
+      <h1>RGB-Cube Part 2: Prototype</h1>
+<p class="meta">29 Jan 2015</p>
+
+<div class="post">
+
+<p><a class='fancybox' href='files/2015/PrototypingWhiteboard.JPG' title=''><img alt='' class='right' src='thumbs/PrototypingWhiteboard_400x342.JPG' /></a></p>
+
+<p>This is the second part of my RGB-Cube series (here’s the <a href="/electronics/arduino/2014/08/22/rgb-cube-part-1-planning.html">first</a>) which describes my process of forming an idea to a working prototype. After spending hours of reading and ordering the first parts the project started to take shape and it was time for some serious prototyping. In the last part I described the different ways of controlling 192 LEDs and I decided to go with shift registers (SR). They are easy to control, have a low latency and there are no glitches like when you use Charlieplexing.</p>
+
+<p>After checking out some datasheets I decided to use the <a href="https://www.sparkfun.com/datasheets/IC/SN74HC595.pdf">74HC595</a> which has some nice convenience features:</p>
+
+<ul>
+<li><strong>Output-Enable</strong>: Turn all outputs off at once</li>
+
+<li><strong>Cascading</strong>: Serial output to chain multiple SRs together</li>
+
+<li><strong>Dedicated Storage Register</strong>: Fill the storage with data without impacting the output. Then use the latch to update the output.</li>
+</ul>
+
+<p><strong>Problem:</strong> The 74HC959 however has a max. continuous current of only 35mA. One SR should control 8 LEDs which have a total current of 160mA (if they are all on at once). If we don’t want to blow the SR we need something that can handle a little bit more current: Darlington Transistor Arrays (DTA). They are available as ICs and allow you to switch a higher current with a lower current. That means we put the DTA with 8 channels after the SR to avoid blowing our SR. The DTA model I chose was <a href="http://www.ti.com/lit/ds/symlink/uln2803a.pdf">ULN2803A</a>.</p>
+
+<p><strong>Problem:</strong> Our circuit will be powered with 5V but LEDs don’t like that. That’s why we need resistors after the DTA. Since I’m a lazy person and I did not want to solder 192 resistors I searched online and found Bourns Resistor Networks. Essentially it’s an IC with 8 pins on each side and a resistor in between. If you use IC sockets in your final PCB you get the added advantage of quickly changing resistors to adapt the brightness of your LEDs.</p>
+
+<p>Everything seems settled so now is a good time to print pin-outs of the ICs and grab a breadboard. Once that worked I wanted to create a PCB with one SR, one DTA and 8 LEDs just to make sure and to get some experience in the toner transfer method. After I figured out how to arange the ICs (SR on top, DTA on bottom) I used Eeagle to design the PCB. <strong><a href="http://www.thebox.myzen.co.uk/Tutorial/Inputs.html">Use pull up / down resistors</a> where necessary</strong> or your results might get very unpredictable. In my case I used a 10k resistor to pull OutputEnable high (disable output) and then set it low with the Arduino once I started to push some values into the SR.</p>
+<ul class='gallery'>
+<li><a class='fancybox' href='files/2015/PrototypePCB3.JPG' rel='gallery-e86ed631d5cd66928fc49b2c41f03957' title='Good old breadboard'><img alt='Good old breadboard' src='thumbs/PrototypePCB3_300x200.JPG' /></a></li>
+<li><a class='fancybox' href='files/2015/PrototypePCB1.JPG' rel='gallery-e86ed631d5cd66928fc49b2c41f03957' title='Created with the toner transfer method'><img alt='Created with the toner transfer method' src='thumbs/PrototypePCB1_300x200.JPG' /></a></li>
+<li><a class='fancybox' href='files/2015/PrototypePCB2.JPG' rel='gallery-e86ed631d5cd66928fc49b2c41f03957' title='Prototype in action'><img alt='Prototype in action' src='thumbs/PrototypePCB2_300x200.JPG' /></a></li>
+</ul><div class='clear-left' />
+<p>Using some SPI-Code on the Arduino I got the prototype working. Nice! I could have started now and use 24 SRs to control the LEDs but then every LED would have needed three dedicated wires (red-, green-, blue-kathode) and one shared anode. That would be one ugly Cube with a lot of wires. The solution for this problem will be discussed in my next blog post. But before I end this post one more step was needed to get a smooth LED-Cube: Determining the correct resistor for each color in the RGB-LED so that when all light up at once it gives a clean white. Use a breadboard for this and after that do yourself a favor and <strong>test every singe RGB-LED you want to use</strong>. They vary in brightness sometimes, so take a reference LED and test them all. I built a testing rig with three reference LEDs (one for each color) and a button for each of them. Then I attached the LED to test and pressed each button to compare the colors. To better judge the brightness you can put small paper hats ontop of the LEDs, also you won’t get blind this way ;)</p>
+
+<p><a class='fancybox' href='files/2015/LED-Testing.JPG' title=''><img alt='' class='center' src='thumbs/LED-Testing_400x300.JPG' /></a></p>
+
+<p><strong>Take aways of this post:</strong></p>
+
+<ul>
+<li>Use a darlington transitor array to protect your shift register</li>
+
+<li>Use bourne resistor networks and IC-sockets to save soldering work and make your resistors exchangable</li>
+
+<li><a href="http://www.thebox.myzen.co.uk/Tutorial/Inputs.html">Use pull up / down resistors</a> where necessary to avoid erratic behaviour</li>
+
+<li>Test your LEDs for brightness</li>
+
+<li>Find the correct resistor for each color so your RGB-LED is truly white</li>
+</ul>
+
+
+<hr>
+<p class="tags"><small>
+		Tags: <a href="/tag/Tinkering.html" rel="tag">Tinkering</a>, <a href="/tag/Arduino.html" rel="tag">Arduino</a>, <a href="/tag/LED-Cube.html" rel="tag">LED-Cube</a></small>
+		</p>
+ <div id="disqus_thread"></div>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</div>
+
+    </div>
+
+
+    <div class="container footer">
+         <p>Christoph Gross | chris (at) gross-it.com | <a href="https://github.com/cgrossde">github.com/cgrossde</a>
+          </p>
+    </div>
+
+
+
+    <!-- Load JS files -->
+    <script src="js/vendor/jquery/jquery-1.10.2.min.js"></script>
+    <script src="js/vendor/bootstrap/bootstrap.min.js"></script>
+    <script src="js/plugins/jquery.fancybox.min.js"></script>
+    <script src="js/plugins/libgif.js"></script>
+    <script src="js/plugins/rubbable.js"></script>
+    <script src="js/script.js"></script>
+  </body>
+
+</html>

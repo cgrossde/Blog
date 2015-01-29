@@ -20,4 +20,62 @@ $(document).ready(function() {
 			(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
 		})();
 	}
+
+	// FancyGif
+	$('div.fancygif').each(function(index, box) {
+		var imgTag = $(box).find('img')[0];
+		var container = $($(box).find('.fancygif-container'));
+
+		imgTag.onload = function() {
+			container.css('width', $(imgTag).width());
+			if(imgTag !== undefined && /.*\.gif/.test(imgTag.src)) {
+				var superGif = new SuperGif({ gif: imgTag });
+				superGif.load();
+
+				// Get buttons if controls exist
+				if($(box).find('.fancygif-controls').length > 0) {
+					// Restart
+					$($(box).find('.fancygif-restart')).on('click', function() {
+						superGif.move_to(0);
+					});
+					// Forward
+					$($(box).find('.fancygif-forward')).css('color','#999999');
+					// Back
+					$($(box).find('.fancygif-back')).css('color','#999999');
+					
+					// Play/Pause
+					$($(box).find('.fancygif-playpause')).on('click', function(event) {
+						var button = $(event.currentTarget);
+						// Play was pressed -> start GIF disable forward/backward
+						if(button.hasClass('glyphicon-play')) {
+							button.removeClass('glyphicon-play');
+							button.addClass('glyphicon-pause');
+							// Forward
+							$($(box).find('.fancygif-forward')).css('color','#999999').off('click');
+							// Back
+							$($(box).find('.fancygif-back')).css('color','#999999').off('click');
+							superGif.play();
+						}
+						
+						// Pause was pressed -> stop GIF make forward/backward active
+						else {
+							button.addClass('glyphicon-play');
+							button.removeClass('glyphicon-pause');
+							superGif.pause();
+							// Forward
+							$($(box).find('.fancygif-forward')).css('color','#333333').on('click', function() {
+								superGif.move_relative(1);
+							});
+							// Back
+							$($(box).find('.fancygif-back')).css('color','#333333').on('click', function() {
+								superGif.move_relative(-1);
+							});
+						}
+					});
+				}
+			}
+		};
+	}); // End Fancygif
+
+
 });

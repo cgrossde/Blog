@@ -93,9 +93,12 @@
 </ul>
 
 <p>Now the first 4 Outputs are high, we are not done yet. Everytime you put the clock high for a short amount of time the shift register reads the data line. Then it shifts all outputs one up and sets the first output high or low depending on the data line. To get the desired state of our shift register( first 4 low, last 4 high) we need to set the data line low and clock the shift register 4 more times. This will shift the 4 high outputs to the end and enter 4 low outputs at the beginning. Here is a GIF with another example (it sets the output to 00110101):</p>
-
-<p><img src="http://chris-labs.de//files/2014/ShiftRegisterWM.gif" alt="Shift register example" /></p>
-
+<div class='fancygif '><div class='fancygif-container center'><img src='files/2014/ShiftRegisterWM2.gif' /></div><div class='fancygif-controls'>
+                      <div class='fancygif-button fancygif-back glyphicon glyphicon-chevron-left'> </div>
+                      <div class='fancygif-button fancygif-playpause glyphicon glyphicon-pause'> </div>
+                      <div class='fancygif-button fancygif-forward glyphicon glyphicon-chevron-right'> </div>
+                      <div class='fancygif-button fancygif-restart glyphicon glyphicon-repeat'> </div>
+                    </div></div>
 <p>Shift registers usually have some more features:</p>
 
 <p>A <strong>serial output line</strong>. After you put data in 8 times every new clock cycle will push one output state at the end of the shift register out to the serial output line. This allows you to chain multiple shift registers.</p>
@@ -137,6 +140,8 @@
     <script src="js/vendor/jquery/jquery-1.10.2.min.js"></script>
     <script src="js/vendor/bootstrap/bootstrap.min.js"></script>
     <script src="js/plugins/jquery.fancybox.min.js"></script>
+    <script src="js/plugins/libgif.js"></script>
+    <script src="js/plugins/rubbable.js"></script>
     <script src="js/script.js"></script>
   </body>
 
