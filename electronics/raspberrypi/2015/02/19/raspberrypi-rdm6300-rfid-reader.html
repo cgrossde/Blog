@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="google-site-verification" content="OHM4kICBE2MaQ9U7G1F07CMG2wEzl46eWq7tNGAyWjc" />
+    <title>
+      Raspberry Pi: RDM6300 RFID reader
+    </title>
+    <base href="http://chris-labs.de/" />
+    <meta name="viewport" content="width=device-width">
+    <!-- Compiled SCSS file -->
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+      var shiftWindow = function() { scrollBy(0, -60) };
+      window.addEventListener("hashchange", shiftWindow);
+      function load() { if (window.location.hash) shiftWindow(); }
+    </script>
+  </head>
+  <body onload="load()">
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+          </button>
+          <a class="navbar-brand" href="http://chris-labs.de/"><img src="images/profil_sw.png" alt="Profilbild" />&nbsp;<strong>CHRIS</strong>labs</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active">
+              <a href="http://chris-labs.de/">Home</a>
+            </li>
+            <!--li>
+              <a href="#about">About</a>
+            </li>
+            <li>
+              <a href="#contact">Projects</a>
+            </li-->
+          </ul>
+        </div>
+        <!--/.nav-collapse -->
+      </div>
+    </div>
+    <div class="content container">
+      <h1>Raspberry Pi: RDM6300 RFID reader</h1>
+<p class="meta">19 Feb 2015</p>
+
+<div class="post">
+
+<p>I mentioned in <a href="/electronics/raspberrypi/2013/09/17/raspberrypi-first-time-setup.html">this post</a> that the RDM6300 can be connected to the Raspberry Pi. Since then I got several emails from people asking me how to do it. Unfortunately I don’t have my RFID tags anymore. However I made notes when trying to do this the first time. If you encounter any problems / bugs when following these instructions please email me or leave a comment, so we can sort things out. I should get new tags in a few weeks until then I can’t promise this works. Use these instructions at your own risk.</p>
+
+<h2 id="wiring">Wiring</h2>
+
+<p>Wire it up according to the schematics (click to enlarge). <em>GPIO15</em> is the UART RX pin of the RPi.</p>
+<ul class='gallery'>
+<li><a class='fancybox' href='files/2015/RDM6300_schematics.jpg' rel='gallery-883fa20df8a4de1f77d72c76e0ce09dc' title='Schematics'><img alt='Schematics' src='thumbs/RDM6300_schematics_400x300.jpg' /></a></li>
+<li><a class='fancybox' href='files/2015/RDM6300_wiring.jpg' rel='gallery-883fa20df8a4de1f77d72c76e0ce09dc' title='Wiring'><img alt='Wiring' src='thumbs/RDM6300_wiring_400x300.jpg' /></a></li>
+</ul><div class='clear-left' />
+<h2 id="software">Software</h2>
+
+<p>First enable UART using <code>sudo raspi-config</code> (it should be under <em>Serial</em>). Then install python and a serial package:</p>
+<div class='highlight'><pre><code class='bash'>sudo apt-get install python python-pip
+sudo pip install pyserial
+</code></pre></div>
+<p>Once you have python setup, create a file <code>readRFID.py</code> with the following content and execute <code>python readRFID.py</code>.</p>
+<div class='highlight'><pre><code class='bash'>import serial
+import sys
+import <span class='nb'>time</span>
+from operator import xor
+<span class='c'># UART</span>
+<span class='nv'>ID</span> <span class='o'>=</span> <span class='s2'>&quot;&quot;</span>
+<span class='nv'>Zeichen</span> <span class='o'>=</span> 0
+<span class='nv'>Checksumme</span> <span class='o'>=</span> 0
+<span class='nv'>Tag</span> <span class='o'>=</span> 0
+<span class='c'># Flags</span>
+<span class='nv'>Startflag</span> <span class='o'>=</span> <span class='s2'>&quot;\x02&quot;</span>
+<span class='nv'>Endflag</span> <span class='o'>=</span> <span class='s2'>&quot;\x03&quot;</span>
+<span class='c'># Open UART (close first just to make sure)</span>
+<span class='nv'>UART</span> <span class='o'>=</span> serial.Serial<span class='o'>(</span><span class='s2'>&quot;/dev/ttyAMA0&quot;</span>, 9600<span class='o'>)</span>
+UART.close<span class='o'>()</span>
+UART.open<span class='o'>()</span>
+<span class='k'>while </span>True:
+    <span class='c'># Reset vars</span>
+    <span class='nv'>Checksumme</span> <span class='o'>=</span> 0
+    <span class='nv'>Checksumme_Tag</span> <span class='o'>=</span> 0
+    <span class='nv'>ID</span> <span class='o'>=</span> <span class='s2'>&quot;&quot;</span>
+    <span class='c'># Read chars</span>
+    <span class='nv'>Zeichen</span> <span class='o'>=</span> UART.read<span class='o'>()</span>
+    <span class='c'># Start of transmission signaled?</span>
+     <span class='k'>if </span><span class='nv'>Zeichen</span> <span class='o'>==</span> Startflag:
+        <span class='c'># Build ID</span>
+        <span class='k'>for </span>Counter in range<span class='o'>(</span>13<span class='o'>)</span>:
+            <span class='nv'>Zeichen</span> <span class='o'>=</span> UART.read<span class='o'>()</span>
+            <span class='nv'>ID</span> <span class='o'>=</span> ID + str<span class='o'>(</span>Zeichen<span class='o'>)</span>
+        <span class='c'># Remove endflag from string</span>
+        <span class='nv'>ID</span> <span class='o'>=</span> ID.replace<span class='o'>(</span>Endflag, <span class='s2'>&quot;&quot;</span> <span class='o'>)</span>
+        <span class='c'># Calc checksum</span>
+        <span class='k'>for </span>I in range<span class='o'>(</span>0, 9, 2<span class='o'>)</span>:
+            <span class='nv'>Checksumme</span> <span class='o'>=</span> Checksumme ^ <span class='o'>(((</span>int<span class='o'>(</span>ID<span class='o'>[</span>I<span class='o'>]</span>, 16<span class='o'>))</span> <span class='s'>&lt;&lt; 4) + int(ID[I+1], 16))</span>
+<span class='s'>        Checksumme = hex(Checksumme)</span>
+<span class='s'>        # Find tag</span>
+<span class='s'>        Tag = ((int(ID[1], 16)) &lt;&lt; 8) + ((int(ID[2], 16)) &lt;&lt; 4</span><span class='o'>)</span> + <span class='o'>((</span>int<span class='o'>(</span>ID<span class='o'>[</span>3<span class='o'>]</span>, 16<span class='o'>))</span> <span class='s'>&lt;&lt; 0)</span>
+<span class='s'>        Tag = hex(Tag)</span>
+<span class='s'>        # Print data</span>
+<span class='s'>        print &quot;------------------------------------------&quot;</span>
+<span class='s'>        print &quot;Data: &quot;, ID</span>
+<span class='s'>        print &quot;Tag: &quot;, Tag</span>
+<span class='s'>        print &quot;ID: &quot;, ID[4:10</span><span class='o'>]</span>, <span class='s2'>&quot; - &quot;</span>, int<span class='o'>(</span>ID<span class='o'>[</span>4:10<span class='o'>]</span>, 16<span class='o'>)</span>
+        print <span class='s2'>&quot;Checksum: &quot;</span>, Checksumme
+        print <span class='s2'>&quot;------------------------------------------&quot;</span>
+</code></pre></div>
+<p>Again, since I did this a long time ago and reconstructed this post from my notes I can’t guarantee that it works. I would appreciate any feedback in the comments.</p>
+
+
+<hr>
+<p class="tags"><small>
+		Tags: <a href="/tag/RaspberryPi.html" rel="tag">RaspberryPi</a>, <a href="/tag/RDM6300.html" rel="tag">RDM6300</a>, <a href="/tag/RFID.html" rel="tag">RFID</a></small>
+		</p>
+ <div id="disqus_thread"></div>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</div>
+
+    </div>
+
+
+    <div class="container footer">
+         <p>Christoph Gross | chris (at) gross-it.com | <a href="https://github.com/cgrossde">github.com/cgrossde</a>
+          </p>
+    </div>
+
+
+
+    <!-- Load JS files -->
+    <script src="js/vendor/jquery/jquery-1.10.2.min.js"></script>
+    <script src="js/vendor/bootstrap/bootstrap.min.js"></script>
+    <script src="js/plugins/jquery.fancybox.min.js"></script>
+    <script src="js/plugins/libgif.js"></script>
+    <script src="js/plugins/rubbable.js"></script>
+    <script src="js/script.js"></script>
+  </body>
+
+</html>
