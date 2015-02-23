@@ -65,7 +65,7 @@
 </ul><div class='clear-left' />
 <h2 id="software">Software</h2>
 
-<p>First enable UART using <code>sudo raspi-config</code> (it should be under <em>Serial</em>). Then install python and a serial package:</p>
+<p>First disable the kernel debugging UART using <code>sudo raspi-config</code> (it should be under <em>“8 Advanced Options” -&gt; “A8 Serial”</em>). Then install python and the serial package:</p>
 <div class='highlight'><pre><code class='bash'>sudo apt-get install python python-pip
 sudo pip install pyserial
 </code></pre></div>
@@ -94,7 +94,7 @@ UART.open<span class='o'>()</span>
     <span class='c'># Read chars</span>
     <span class='nv'>Zeichen</span> <span class='o'>=</span> UART.read<span class='o'>()</span>
     <span class='c'># Start of transmission signaled?</span>
-     <span class='k'>if </span><span class='nv'>Zeichen</span> <span class='o'>==</span> Startflag:
+    <span class='k'>if </span><span class='nv'>Zeichen</span> <span class='o'>==</span> Startflag:
         <span class='c'># Build ID</span>
         <span class='k'>for </span>Counter in range<span class='o'>(</span>13<span class='o'>)</span>:
             <span class='nv'>Zeichen</span> <span class='o'>=</span> UART.read<span class='o'>()</span>
